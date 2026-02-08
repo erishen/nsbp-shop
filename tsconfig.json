@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["es5", "es6", "dom"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "removeComments": false,
+    "jsx": "react",
+    "sourceMap": true,
+    "outDir": "./build/",
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "preserveConstEnums": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/component/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@services/*": ["./src/services/*"],
+      "@styled/*": ["./src/styled/*"],
+      "@store/*": ["./src/store/*"],
+      "@reducers/*": ["./src/reducers/*"],
+      "@containers/*": ["./src/containers/*"],
+      "@server/*": ["./src/server/*"],
+      "@client/*": ["./src/client/*"],
+      "@css/*": ["./src/css/*"],
+      "@externals/*": ["./src/externals/*"],
+      "@reducers": ["./src/reducers/index"],
+      "@store": ["./src/store/index"],
+      "@utils": ["./src/utils/index"],
+      "@client": ["./src/client/index"],
+      "@server": ["./src/server/index"]
+    }
+  },
+  "include":[
+    "./src/**/*",
+    "./src/externals/*.d.ts"
+  ]
+}
