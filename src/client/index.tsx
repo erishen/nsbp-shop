@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { StyleSheetManager } from 'styled-components'
 import routers from '@/Routers'
 import { Provider } from 'react-redux'
 import getStore from '@/store'
@@ -18,21 +19,23 @@ const App = () => {
   }, []) // 空依赖数组，只执行一次
 
   return (
-    <Theme>
-      <Provider store={store}>
-        <BrowserRouter>
-          <Routes>
-            {routers.map((router) => (
-              <Route
-                key={router.key}
-                path={router.path}
-                element={router.element}
-              />
-            ))}
-          </Routes>
-        </BrowserRouter>
-      </Provider>
-    </Theme>
+    <StyleSheetManager disableCSSOMInjection>
+      <Theme>
+        <Provider store={store}>
+          <BrowserRouter>
+            <Routes>
+              {routers.map((router) => (
+                <Route
+                  key={router.key}
+                  path={router.path}
+                  element={router.element}
+                />
+              ))}
+            </Routes>
+          </BrowserRouter>
+        </Provider>
+      </Theme>
+    </StyleSheetManager>
   )
 }
 

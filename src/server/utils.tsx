@@ -157,7 +157,6 @@ export const render = (req: Request, res: Response) => {
         res.send(html)
       } catch (e: Error) {
         console.error('SSR rendering error:', e.message)
-        sheet.seal()
         res.status(500).send('Internal Server Error')
       }
     })

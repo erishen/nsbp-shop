@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
@@ -6,6 +7,10 @@ const { version } = require('../package.json')
 const LoadablePlugin = require('@loadable/webpack-plugin')
 const { createLoadableComponentsTransformer } = require('typescript-loadable-components-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+
+// 加载环境变量
+require('dotenv').config()
+require('dotenv').config({ path: '.env.local' })
 
 // const createStyledComponentsTransformer =
 //   require('typescript-plugin-styled-components').default
@@ -159,6 +164,10 @@ module.exports = ({ mode, entry, server, init }) => {
     plugins: [
       new LoadablePlugin({
         writeToDisk: true
+      }),
+      new webpack.DefinePlugin({
+        'process.env.NSGM_SHOP_API': JSON.stringify(process.env.NSGM_SHOP_API || 'http://localhost:3000'),
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
       })
     ],
     optimization: {
@@ -178,17 +187,19 @@ module.exports = ({ mode, entry, server, init }) => {
     }
   }
 
-  if(mode === 'development' && !server){
-    config.plugins.push(
-      new BrowserSyncPlugin(
-        {
-          host: 'localhost',
-          port: 3000,
-          proxy: 'http://localhost:3001/'
-        }
-      )
-    )
-  }
+  // BrowserSync 在开发 nsgm-shop 集成时禁用，避免端口冲突
+  // 如需启用，取消下面注释
+  // if(mode === 'development' && !server){
+  //   config.plugins.push(
+  //     new BrowserSyncPlugin(
+  //       {
+  //         host: 'localhost',
+  //         port: 3000,
+  //         proxy: 'http://localhost:3001/'
+  //       }
+  //     )
+  //   )
+  // }
 
   if(mode === 'production' || server){
     config.plugins.push(
