@@ -176,17 +176,6 @@ module.exports = ({ mode, entry, server, init }) => {
     }
   }
 
-  if(init){
-    config.cache = false
-  } else {
-    config.cache = {
-      type: 'filesystem',
-      cacheDirectory: path.resolve(__dirname, '.temp_cache'),
-      // type: 'memory',
-      // cacheUnaffected: true,
-    }
-  }
-
   // BrowserSync 在开发 nsgm-shop 集成时禁用，避免端口冲突
   // 如需启用，取消下面注释
   // if(mode === 'development' && !server){

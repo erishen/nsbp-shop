@@ -1,3 +1,4 @@
+// 强制 webpack 重新编译 - 2025
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { searchProducts, getCart, isLoggedIn as checkIsLoggedIn } from '../services/shop'
@@ -87,21 +88,21 @@ const Deals: React.FC = () => {
 
       <ShopHeader>
         <HeaderContent>
-          <Logo href="/shop">🛍️ 精品商城</Logo>
+          <Logo href="/">🛍️ 精品商城</Logo>
             <NavMenu>
-              <NavLink href="/shop">首页</NavLink>
-              <NavLink href="/shop/products">全部商品</NavLink>
-              <NavLink href="/shop/categories">分类</NavLink>
-              <NavLink href="/shop/deals" $active>优惠</NavLink>
+              <NavLink href="/">首页</NavLink>
+              <NavLink href="/products">全部商品</NavLink>
+              <NavLink href="/categories">分类</NavLink>
+              <NavLink href="/deals" $active>优惠</NavLink>
               {mounted && isLoggedIn ? (
-                <AuthLink href="/shop/profile">个人中心</AuthLink>
+                <AuthLink href="/profile">个人中心</AuthLink>
               ) : (
                 <>
-                  <AuthLink href="/shop/login">登录</AuthLink>
-                  <AuthLink href="/shop/register">注册</AuthLink>
+                  <AuthLink href="/login">登录</AuthLink>
+                  <AuthLink href="/register">注册</AuthLink>
                 </>
               )}
-              <CartButton href="/shop/cart">
+              <CartButton href="/cart">
                 🛒 购物车
                 {cartCount > 0 && <CartBadge>{cartCount}</CartBadge>}
               </CartButton>
@@ -145,7 +146,7 @@ const Deals: React.FC = () => {
                 </svg>
               </EmptyIcon>
               <EmptyText>暂无优惠商品</EmptyText>
-              <a href="/shop/products" style={{ color: '#667eea', textDecoration: 'none' }}>
+              <a href="/products" style={{ color: '#667eea', textDecoration: 'none' }}>
                 去逛逛其他商品 →
               </a>
             </EmptyContainer>

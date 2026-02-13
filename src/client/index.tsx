@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { hydrateRoot } from 'react-dom/client'
+import { hydrateRoot, createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { StyleSheetManager } from 'styled-components'
 import routers from '@/Routers'
@@ -8,6 +8,16 @@ import getStore from '@/store'
 import { isSEO } from '@/utils'
 import Theme from '@components/Theme'
 import { loadableReady } from '@loadable/component'
+
+const isDevelopment = process.env.NODE_ENV === 'development'
+
+// 类型声明
+declare const module: NodeModule & {
+  hot?: {
+    accept: (deps: string[], callback: () => void) => void
+  }
+}
+
 
 const App = () => {
   // 使用 useMemo 确保 store 只创建一次，避免每次渲染都创建新 store
@@ -29,7 +39,16 @@ const App = () => {
                   key={router.key}
                   path={router.path}
                   element={router.element}
-                />
+                >
+                  {router.children?.map((child) => (
+                    <Route
+                      key={child.key}
+                      path={child.path}
+                      element={child.element}
+                      index={child.index}
+                    />
+                  ))}
+                </Route>
               ))}
             </Routes>
           </BrowserRouter>
@@ -39,6 +58,29 @@ const App = () => {
   )
 }
 
-loadableReady(() => {
-  hydrateRoot(document.getElementById('root')!, <App />)
-})
+// 渲染函数
+const render = () => {
+  const container = document.getElementById('root')!
+  if (isDevelopment) {
+    // 开发环境：使用 createRoot 支持 HMR
+    const root = container._reactRoot || createRoot(container)
+    container._reactRoot = root
+    root.render(<App />)
+  } else {
+    // 生产环境：使用 hydrateRoot 进行水合
+    loadableReady(() => {
+      hydrateRoot(container, <App />)
+    })
+  }
+}
+
+// 初始化渲染
+render()
+
+// 开发环境启用 HMR
+if (isDevelopment && module.hot) {
+  module.hot.accept(['../Routers'], () => {
+    console.log('HMR: 模块热替换中...')
+    render()
+  })
+}

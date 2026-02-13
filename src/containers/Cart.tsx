@@ -1,7 +1,8 @@
+// 强制 webpack 重新编译 - 2025
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import {
   GlobalStyle,
   ShopLayout,
@@ -20,7 +21,15 @@ import {
   EmptyIcon,
   EmptyText
 } from '../styled/shop'
-import { getCart, getProductById, updateCartItem, removeFromCart, isLoggedIn, type CartItem as CartItemType } from '../services/shop'
+import {
+  getCart,
+  getProductById,
+  updateCartItem,
+  removeFromCart,
+  isLoggedIn,
+  type CartItem as CartItemType,
+  type Product,
+} from '../services/shop'
 
 const CartContainer = styled.div`
   display: grid;
@@ -190,17 +199,16 @@ const CheckoutButton = styled(Button)`
   margin-top: 16px;
 `
 
-interface CartItemWithProduct extends CartItemType {
-  product?: {
-    id: number
-    name: string
-    description: string
-    price: number
-    image_url: string
-  }
+interface CartItemWithProduct {
+  id: number
+  user_id: number
+  product_id: number
+  quantity: number
+  product?: Partial<Product>
 }
 
 const Cart: React.FC = () => {
+  const navigate = useNavigate()
   const [cartItems, setCartItems] = useState<CartItemWithProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -274,7 +282,7 @@ const Cart: React.FC = () => {
         <ShopLayout>
           <ShopHeader>
             <HeaderContent>
-              <Logo href="/shop">🛍️ 精品商城</Logo>
+              <Logo href="/">🛍️ 精品商城</Logo>
             </HeaderContent>
           </ShopHeader>
           <ShopMain>
@@ -299,21 +307,21 @@ const Cart: React.FC = () => {
       <ShopLayout>
         <ShopHeader>
           <HeaderContent>
-            <Logo href="/shop">🛍️ 精品商城</Logo>
+            <Logo href="/">🛍️ 精品商城</Logo>
             <NavMenu>
-              <NavLink href="/shop">首页</NavLink>
-              <NavLink href="/shop/products">全部商品</NavLink>
-              <NavLink href="/shop/categories">分类</NavLink>
-              <NavLink href="/shop/deals">优惠</NavLink>
+              <NavLink href="/">首页</NavLink>
+              <NavLink href="/products">全部商品</NavLink>
+              <NavLink href="/categories">分类</NavLink>
+              <NavLink href="/deals">优惠</NavLink>
               {isLoggedIn() ? (
-                <AuthLink href="/shop/profile">个人中心</AuthLink>
+                <AuthLink href="/profile">个人中心</AuthLink>
               ) : (
                 <>
-                  <AuthLink href="/shop/login">登录</AuthLink>
-                  <AuthLink href="/shop/register">注册</AuthLink>
+                  <AuthLink href="/login">登录</AuthLink>
+                  <AuthLink href="/register">注册</AuthLink>
                 </>
               )}
-              <CartButton href="/shop/cart">
+              <CartButton href="/cart">
                 🛒 购物车
                 {totalCount > 0 && <CartBadge>{totalCount}</CartBadge>}
               </CartButton>
@@ -388,10 +396,10 @@ const Cart: React.FC = () => {
                   <span>合计</span>
                   <span className="price">¥{totalPrice}</span>
                 </SummaryTotal>
-                <CheckoutButton $type="primary" $size="large">
+                <CheckoutButton $type="primary" $size="large" onClick={() => navigate('/checkout')}>
                   去结算
                 </CheckoutButton>
-                <Link to="/shop/products">
+                <Link to="/products">
                   <CheckoutButton $size="medium" style={{ marginTop: '8px' }}>
                     继续购物
                   </CheckoutButton>
@@ -402,7 +410,7 @@ const Cart: React.FC = () => {
             <EmptyContainer>
               <EmptyIcon>🛒</EmptyIcon>
               <EmptyText>购物车是空的</EmptyText>
-              <Link to="/shop/products">
+              <Link to="/products">
                 <Button $type="primary" style={{ marginTop: '16px' }}>
                   去逛逛
                 </Button>

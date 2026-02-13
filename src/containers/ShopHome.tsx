@@ -1,3 +1,4 @@
+// 强制 webpack 重新编译 Category/Cart/Deals/ShopLogin 组件 - 2025
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
@@ -144,23 +145,23 @@ const ShopHome: React.FC = () => {
         {/* Header */}
         <ShopHeader>
           <HeaderContent>
-            <Logo href="/shop">
+            <Logo href="/">
               🛍️ 精品商城
             </Logo>
             <NavMenu>
-              <NavLink href="/shop" $active>首页</NavLink>
-              <NavLink href="/shop/products">全部商品</NavLink>
-              <NavLink href="/shop/categories">分类</NavLink>
-              <NavLink href="/shop/deals">优惠</NavLink>
+              <NavLink href="/" $active>首页</NavLink>
+              <NavLink href="/products">全部商品</NavLink>
+              <NavLink href="/categories">分类</NavLink>
+              <NavLink href="/deals">优惠</NavLink>
               {mounted && isLoggedIn ? (
-                <AuthLink href="/shop/profile">个人中心</AuthLink>
+                <AuthLink href="/profile">个人中心</AuthLink>
               ) : (
                 <>
-                  <AuthLink href="/shop/login">登录</AuthLink>
-                  <AuthLink href="/shop/register">注册</AuthLink>
+                  <AuthLink href="/login">登录</AuthLink>
+                  <AuthLink href="/register">注册</AuthLink>
                 </>
               )}
-              <CartButton href="/shop/cart">
+              <CartButton href="/cart">
                 🛒 购物车
                 {cartCount > 0 && <CartBadge>{cartCount}</CartBadge>}
               </CartButton>
@@ -202,7 +203,7 @@ const ShopHome: React.FC = () => {
             {categories.length > 0 ? (
               <CategoryGrid>
                 {categories.map(category => (
-                  <Link key={category.id} to={`/shop/category/${category.id}`}>
+                  <Link key={category.id} to={`/category/${category.id}`}>
                     <CategoryCard>
                       <CategoryIcon>{category.icon || '📦'}</CategoryIcon>
                       <CategoryName>{category.name}</CategoryName>
@@ -227,7 +228,7 @@ const ShopHome: React.FC = () => {
             {products.length > 0 ? (
               <ProductGrid>
                 {products.map(product => (
-                  <Link key={product.id} to={`/shop/product/${product.id}`}>
+                  <Link key={product.id} to={`/product/${product.id}`}>
                     <ProductCard>
                       <ProductImageWrapper>
                         <ProductImage src={product.image_url} alt={product.name} />

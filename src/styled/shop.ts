@@ -100,7 +100,7 @@ export const CartBadge = styled.span`
   border-radius: 10px;
 `
 
-export const AuthLink = styled.a`
+export const AuthLink = styled.a<{ $active?: boolean }>`
   color: white;
   font-size: 14px;
   padding: 8px 16px;
@@ -109,6 +109,7 @@ export const AuthLink = styled.a`
   text-decoration: none;
   font-weight: 500;
   text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  background: ${props => props.$active ? 'rgba(255,255,255,0.2)' : 'transparent'};
 
   &:hover {
     background: rgba(255,255,255,0.2);

@@ -15,7 +15,7 @@ import { ChunkExtractor } from '@loadable/server'
 
 interface Request {
   path: string
-  query: Record<string, string | undefined>
+  query: Record<string, string | string[] | ParsedQs | undefined>
 }
 
 interface Response {
@@ -125,6 +125,80 @@ export const render = (req: Request, res: Response) => {
         const content = renderToString(jsx)
         const styleTags = sheet.getStyleTags()
 
+        // 开发环境：添加 LiveReload 脚本
+        const liveReloadScript = nodeEnv === 'development'
+          ? `<script>
+              (function() {
+                const clientId = Math.random().toString(36).substring(2, 15);
+                let lastHash = '';
+                let lastChangedAt = 0;
+                let isFirstCheck = true;
+                let consecutiveErrors = 0;
+                
+                const checkUpdate = async () => {
+                  try {
+                    const response = await fetch('/check-update?clientId=' + clientId, {
+                      cache: 'no-store'
+                    });
+                    if (!response.ok) {
+                      consecutiveErrors++;
+                      return;
+                    }
+                    consecutiveErrors = 0;
+                    
+                    const data = await response.json();
+                    const currentHash = data.hash;
+                    const serverChangedAt = data.changedAt || 0;
+                    
+                    // 首次加载，只记录状态，不刷新
+                    if (isFirstCheck) {
+                      lastHash = currentHash;
+                      lastChangedAt = serverChangedAt;
+                      isFirstCheck = false;
+                      console.log('[LiveReload] 已连接，hash:', currentHash.slice(0, 8) + '...');
+                      return;
+                    }
+                    
+                    // 服务器检测到新变更（变化时间戳更新）
+                    if (serverChangedAt > lastChangedAt) {
+                      console.log('[LiveReload] 服务器报告新变更，准备刷新...');
+                      lastChangedAt = serverChangedAt;
+                      lastHash = currentHash;
+                      setTimeout(() => window.location.reload(), 1500);
+                      return;
+                    }
+                    
+                    // 兜底：hash 变了但时间戳没变（服务器重启等情况）
+                    if (currentHash !== lastHash && !isFirstCheck) {
+                      // 确保不是刚加载后的首次比对，给 5 秒缓冲
+                      const timeSinceFirstCheck = Date.now() - window.performance.timing.loadEventEnd;
+                      if (timeSinceFirstCheck > 5000) {
+                        console.log('[LiveReload] Hash 变化，刷新页面...');
+                        lastHash = currentHash;
+                        setTimeout(() => window.location.reload(), 1500);
+                      }
+                    }
+                  } catch (e) {
+                    consecutiveErrors++;
+                    // 连续错误超过5次可能是服务器重启，刷新一下
+                    if (consecutiveErrors > 5) {
+                      console.log('[LiveReload] 连接恢复，刷新页面...');
+                      window.location.reload();
+                    }
+                  }
+                };
+                
+                // 每2秒检查一次更新
+                setInterval(checkUpdate, 2000);
+                // 页面可见时立即检查
+                document.addEventListener('visibilitychange', () => {
+                  if (!document.hidden) checkUpdate();
+                });
+                checkUpdate();
+              })();
+            </script>`
+          : ''
+
         const html = `
               <!DOCTYPE html>
               <html>
@@ -142,6 +216,7 @@ export const render = (req: Request, res: Response) => {
                       ${styleTags}
                       ${webExtractor.getLinkTags()}
                       ${webExtractor.getStyleTags()}
+                      ${liveReloadScript}
                   </head>
                   <body>
                       <div id="root">${content}</div>

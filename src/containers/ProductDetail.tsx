@@ -1,3 +1,4 @@
+// 强制 webpack 重新编译 - 2025
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
@@ -272,13 +273,13 @@ const ProductDetail: React.FC = () => {
         <ShopLayout>
           <ShopHeader>
             <HeaderContent>
-              <Logo href="/shop">🛍️ 精品商城</Logo>
+              <Logo href="/">🛍️ 精品商城</Logo>
             </HeaderContent>
           </ShopHeader>
           <ShopMain>
             <div style={{ textAlign: 'center', padding: '80px' }}>
               <h2>{error || '商品不存在'}</h2>
-              <Link to="/shop/products">
+              <Link to="/products">
                 <Button $type="primary" style={{ marginTop: '16px' }}>返回商品列表</Button>
               </Link>
             </div>
@@ -303,21 +304,21 @@ const ProductDetail: React.FC = () => {
       <ShopLayout>
         <ShopHeader>
           <HeaderContent>
-            <Logo href="/shop">🛍️ 精品商城</Logo>
+            <Logo href="/">🛍️ 精品商城</Logo>
             <NavMenu>
-              <NavLink href="/shop">首页</NavLink>
-              <NavLink href="/shop/products">全部商品</NavLink>
-              <NavLink href="/shop/categories">分类</NavLink>
-              <NavLink href="/shop/deals">优惠</NavLink>
+              <NavLink href="/">首页</NavLink>
+              <NavLink href="/products">全部商品</NavLink>
+              <NavLink href="/categories">分类</NavLink>
+              <NavLink href="/deals">优惠</NavLink>
               {isLoggedIn() ? (
-                <AuthLink href="/shop/profile">个人中心</AuthLink>
+                <AuthLink href="/profile">个人中心</AuthLink>
               ) : (
                 <>
-                  <AuthLink href="/shop/login">登录</AuthLink>
-                  <AuthLink href="/shop/register">注册</AuthLink>
+                  <AuthLink href="/login">登录</AuthLink>
+                  <AuthLink href="/register">注册</AuthLink>
                 </>
               )}
-              <CartButton href="/shop/cart">
+              <CartButton href="/cart">
                 🛒 购物车
                 {cartCount > 0 && <CartBadge>{cartCount}</CartBadge>}
               </CartButton>

@@ -142,7 +142,7 @@ export const graphqlMutation = async (mutation: string, variables?: any) => {
 
 // 检查错误
 export const hasGraphqlErrors = (response: any): boolean => {
-  return response?.errors && response.errors.length > 0
+  return !!(response?.errors && response.errors.length > 0)
 }
 
 export const getGraphqlErrorMessage = (response: any): string => {

@@ -1,3 +1,4 @@
+// 强制 webpack 重新编译 - 2025
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
@@ -139,21 +140,21 @@ const Category: React.FC = () => {
       <ShopLayout>
         <ShopHeader>
           <HeaderContent>
-            <Logo href="/shop">🛍️ 精品商城</Logo>
+            <Logo href="/">🛍️ 精品商城</Logo>
             <NavMenu>
-              <NavLink href="/shop">首页</NavLink>
-              <NavLink href="/shop/products">全部商品</NavLink>
-              <NavLink href="/shop/categories" $active>分类</NavLink>
-              <NavLink href="/shop/deals">优惠</NavLink>
+              <NavLink href="/">首页</NavLink>
+              <NavLink href="/products">全部商品</NavLink>
+              <NavLink href="/categories" $active>分类</NavLink>
+              <NavLink href="/deals">优惠</NavLink>
               {isLoggedIn() ? (
-                <AuthLink href="/shop/profile">个人中心</AuthLink>
+                <AuthLink href="/profile">个人中心</AuthLink>
               ) : (
                 <>
-                  <AuthLink href="/shop/login">登录</AuthLink>
-                  <AuthLink href="/shop/register">注册</AuthLink>
+                  <AuthLink href="/login">登录</AuthLink>
+                  <AuthLink href="/register">注册</AuthLink>
                 </>
               )}
-              <CartButton href="/shop/cart">
+              <CartButton href="/cart">
                 🛒 购物车
                 {cartCount > 0 && <CartBadge>{cartCount}</CartBadge>}
               </CartButton>
@@ -180,9 +181,9 @@ const Category: React.FC = () => {
           )}
 
           <Breadcrumb>
-            <Link to="/shop">首页</Link>
+            <Link to="/">首页</Link>
             <span>/</span>
-            <Link to="/shop/categories">分类</Link>
+            <Link to="/categories">分类</Link>
             {currentCategory && (
               <>
                 <span>/</span>
@@ -200,7 +201,7 @@ const Category: React.FC = () => {
               {categories.length > 0 ? (
                 <CategoryGrid>
                   {categories.map(category => (
-                    <Link key={category.id} to={`/shop/category/${category.id}`}>
+                    <Link key={category.id} to={`/category/${category.id}`}>
                       <CategoryCard>
                         <CategoryIcon>{category.icon || '📦'}</CategoryIcon>
                         <CategoryName>{category.name}</CategoryName>
@@ -258,7 +259,7 @@ const Category: React.FC = () => {
                 <EmptyContainer>
                   <EmptyIcon>📦</EmptyIcon>
                   <EmptyText>该分类暂无商品</EmptyText>
-                  <Link to="/shop/categories">
+                  <Link to="/categories">
                     <button style={{ 
                       marginTop: '16px',
                       padding: '8px 16px',

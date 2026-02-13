@@ -48,6 +48,20 @@ export interface Order {
   user_id: number
   order_no: string
   total_amount: number
+  pay_amount: number
+  status: string
+  pay_status: string
+  pay_type?: string
+  pay_time?: string
+  ship_time?: string
+  express_company?: string
+  express_no?: string
+  receiver_name: string
+  receiver_phone: string
+  receiver_address: string
+  remark?: string
+  create_date: string
+  update_date?: string
 }
 
 export interface User {
@@ -370,9 +384,36 @@ export const removeFromCart = async (id: number): Promise<number> => {
   return response.data!.cartDelete
 }
 
+export const clearCart = async (ids: number[]): Promise<number> => {
+  const mutation = `
+    mutation ($ids: [Int]) {
+      cartBatchDelete(ids: $ids)
+    }
+  `
+
+  const response: GraphQLResponse<{ cartBatchDelete: number }> = await graphqlMutation(mutation, { ids })
+
+  if (response.errors) {
+    throw new Error(response.errors[0].message)
+  }
+
+  return response.data!.cartBatchDelete
+}
+
 // ==================== Order 服务 ====================
 
-export const createOrder = async (cartIds: number[], addressId: number): Promise<number> => {
+export interface CreateOrderData {
+  user_id: number
+  order_no: string
+  total_amount: number
+  pay_amount: number
+  receiver_name: string
+  receiver_phone: string
+  receiver_address: string
+  remark?: string
+}
+
+export const createOrder = async (orderData: CreateOrderData): Promise<number> => {
   const mutation = `
     mutation ($data: OrderAddInput) {
       orderAdd(data: $data)
@@ -381,8 +422,16 @@ export const createOrder = async (cartIds: number[], addressId: number): Promise
 
   const response: GraphQLResponse<{ orderAdd: number }> = await graphqlMutation(mutation, {
     data: {
-      cart_ids: cartIds,
-      address_id: addressId,
+      user_id: orderData.user_id,
+      order_no: orderData.order_no,
+      total_amount: orderData.total_amount,
+      pay_amount: orderData.pay_amount,
+      receiver_name: orderData.receiver_name,
+      receiver_phone: orderData.receiver_phone,
+      receiver_address: orderData.receiver_address,
+      remark: orderData.remark || '',
+      status: 'pending',
+      pay_status: 'unpaid',
     },
   })
 
@@ -393,27 +442,45 @@ export const createOrder = async (cartIds: number[], addressId: number): Promise
   return response.data!.orderAdd
 }
 
-export const getOrders = async (page = 0, pageSize = 10): Promise<PaginationResult<Order>> => {
+export const getOrders = async (page = 0, pageSize = 10, user_id?: number): Promise<PaginationResult<Order>> => {
   const query = `
-    query ($page: Int, $pageSize: Int) {
-      order(page: $page, pageSize: $pageSize) {
+    query ($page: Int, $pageSize: Int, $user_id: Int) {
+      order(page: $page, pageSize: $pageSize, user_id: $user_id) {
         totalCounts
         items {
           id
           user_id
           order_no
           total_amount
+          pay_amount
           status
-          created_at
+          pay_status
+          pay_type
+          pay_time
+          ship_time
+          express_company
+          express_no
+          receiver_name
+          receiver_phone
+          receiver_address
+          remark
+          create_date
+          update_date
         }
       }
     }
   `
 
-  const response: GraphQLResponse<{ order: PaginationResult<Order> }> = await graphqlQuery(query, {
+  const variables: any = {
     page,
     pageSize,
-  })
+  }
+
+  if (user_id !== undefined) {
+    variables.user_id = user_id
+  }
+
+  const response: GraphQLResponse<{ order: PaginationResult<Order> }> = await graphqlQuery(query, variables)
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -487,6 +554,44 @@ export const getHomePageData = async (): Promise<HomePageData> => {
   }
 }
 
+export interface UserSearchInput {
+  username?: string
+  nickname?: string
+  phone?: string
+}
+
+export const searchUsers = async (searchData: UserSearchInput, page = 0, pageSize = 10): Promise<PaginationResult<User>> => {
+  const query = `
+    query ($page: Int, $pageSize: Int, $data: UserSearchInput) {
+      userSearch(page: $page, pageSize: $pageSize, data: $data) {
+        totalCounts
+        items {
+          id
+          username
+          nickname
+          avatar
+          email
+          phone
+          status
+          created_at
+        }
+      }
+    }
+  `
+
+  const response: GraphQLResponse<{ userSearch: PaginationResult<User> }> = await graphqlQuery(query, {
+    page,
+    pageSize,
+    data: searchData,
+  })
+
+  if (response.errors) {
+    throw new Error(response.errors[0].message)
+  }
+
+  return response.data!.userSearch
+}
+
 // ==================== Auth 服务 ====================
 
 export const login = async (username: string, password: string): Promise<string> => {
@@ -509,6 +614,15 @@ export const login = async (username: string, password: string): Promise<string>
   // 保存 token 到 localStorage
   if (typeof window !== 'undefined') {
     localStorage.setItem('token', token)
+    // 通过 username 获取 userId
+    try {
+      const userData = await searchUsers({ username })
+      if (userData.items.length > 0) {
+        localStorage.setItem('userId', userData.items[0].id.toString())
+      }
+    } catch (e) {
+      console.error('Failed to get userId:', e)
+    }
   }
   return token
 }
@@ -554,6 +668,27 @@ export const logout = () => {
 export const getToken = (): string | null => {
   if (typeof window !== 'undefined') {
     return localStorage.getItem('token')
+  }
+  return null
+}
+
+export const getUserId = (): number | null => {
+  if (typeof window !== 'undefined') {
+    // 先尝试从 localStorage 中的 userId 字段获取
+    const userId = localStorage.getItem('userId')
+    if (userId) {
+      return parseInt(userId, 10)
+    }
+
+    // 如果没有 userId，尝试从 token 中解析
+    // token 格式: user_{userId}_{timestamp}
+    const token = localStorage.getItem('token')
+    if (token) {
+      const match = token.match(/^user_(\d+)_/)
+      if (match && match[1]) {
+        return parseInt(match[1], 10)
+      }
+    }
   }
   return null
 }
