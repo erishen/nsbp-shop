@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Helmet } from 'react-helmet'
 
@@ -44,8 +44,8 @@ const AddressList = styled.div`
 `
 
 const AddressCard = styled.div<{ $default?: boolean }>`
-  background: ${props => props.$default ? '#f0f5ff' : 'white'};
-  border: 2px solid ${props => props.$default ? '#667eea' : '#f0f0f0'};
+  background: ${(props) => (props.$default ? '#f0f5ff' : 'white')};
+  border: 2px solid ${(props) => (props.$default ? '#667eea' : '#f0f0f0')};
   border-radius: 12px;
   padding: 20px;
   transition: all 0.3s ease;
@@ -100,13 +100,13 @@ const ActionButton = styled.button<{ $danger?: boolean }>`
   border: none;
   border-radius: 6px;
   background: transparent;
-  color: ${props => props.$danger ? '#ff4d4f' : '#667eea'};
+  color: ${(props) => (props.$danger ? '#ff4d4f' : '#667eea')};
   font-size: 13px;
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${props => props.$danger ? '#fff2f0' : '#f0f5ff'};
+    background: ${(props) => (props.$danger ? '#fff2f0' : '#f0f5ff')};
   }
 `
 
@@ -130,7 +130,7 @@ const addresses = [
     city: '北京市',
     district: '朝阳区',
     detail: '建国路88号SOHO现代城A座1201',
-    isDefault: true,
+    isDefault: true
   },
   {
     id: 2,
@@ -140,8 +140,8 @@ const addresses = [
     city: '上海市',
     district: '浦东新区',
     detail: '陆家嘴环路1000号恒生银行大厦',
-    isDefault: false,
-  },
+    isDefault: false
+  }
 ]
 
 const AddressPage: React.FC = () => {
@@ -165,7 +165,7 @@ const AddressPage: React.FC = () => {
           </EmptyState>
         ) : (
           <AddressList>
-            {addresses.map(addr => (
+            {addresses.map((addr) => (
               <AddressCard key={addr.id} $default={addr.isDefault}>
                 <AddressHeader>
                   <Name>{addr.name}</Name>

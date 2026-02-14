@@ -18,7 +18,6 @@ declare const module: NodeModule & {
   }
 }
 
-
 const App = () => {
   // 使用 useMemo 确保 store 只创建一次，避免每次渲染都创建新 store
   const store = useMemo(() => {
@@ -80,6 +79,7 @@ render()
 // 开发环境启用 HMR
 if (isDevelopment && module.hot) {
   module.hot.accept(['../Routers'], () => {
+    // eslint-disable-next-line no-console
     console.log('HMR: 模块热替换中...')
     render()
   })

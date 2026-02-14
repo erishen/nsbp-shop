@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import {
   GlobalStyle,
@@ -19,7 +19,7 @@ import {
   LoadingContainer,
   LoadingSpinner
 } from '../styled/shop'
-import { getOrders, getCart, isLoggedIn, type Order } from '../services/shop'
+import { getCart, isLoggedIn, type Order } from '../services/shop'
 
 const OrderDetailContainer = styled.div`
   max-width: 1200px;
@@ -46,7 +46,7 @@ const OrderHeader = styled.div`
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 `
 
 const OrderTitle = styled.h1`
@@ -88,22 +88,32 @@ const OrderStatus = styled.div<{ $status: string }>`
   border-radius: 20px;
   font-size: 14px;
   font-weight: 500;
-  background: ${props => {
+  background: ${(props) => {
     switch (props.$status) {
-      case 'completed': return '#f6ffed'
-      case 'processing': return '#fff7e6'
-      case 'shipped': return '#e6f7ff'
-      case 'pending': return '#fff2f0'
-      default: return '#f5f5f5'
+      case 'completed':
+        return '#f6ffed'
+      case 'processing':
+        return '#fff7e6'
+      case 'shipped':
+        return '#e6f7ff'
+      case 'pending':
+        return '#fff2f0'
+      default:
+        return '#f5f5f5'
     }
   }};
-  color: ${props => {
+  color: ${(props) => {
     switch (props.$status) {
-      case 'completed': return '#52c41a'
-      case 'processing': return '#fa8c16'
-      case 'shipped': return '#1890ff'
-      case 'pending': return '#ff4d4f'
-      default: return '#666'
+      case 'completed':
+        return '#52c41a'
+      case 'processing':
+        return '#fa8c16'
+      case 'shipped':
+        return '#1890ff'
+      case 'pending':
+        return '#ff4d4f'
+      default:
+        return '#666'
     }
   }};
 `
@@ -113,7 +123,7 @@ const SectionCard = styled.div`
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 `
 
 const SectionTitle = styled.h2`
@@ -158,9 +168,9 @@ const TimelineItem = styled.div<{ $active?: boolean }>`
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: ${props => props.$active ? '#52c41a' : '#f0f0f0'};
+    background: ${(props) => (props.$active ? '#52c41a' : '#f0f0f0')};
     border: 2px solid white;
-    box-shadow: 0 0 0 2px ${props => props.$active ? '#52c41a' : '#f0f0f0'};
+    box-shadow: 0 0 0 2px ${(props) => (props.$active ? '#52c41a' : '#f0f0f0')};
     z-index: 1;
   }
 `
@@ -312,11 +322,14 @@ const EmptyText = styled.div`
 `
 
 // 模拟订单详情数据
-const generateMockOrderDetail = (orderId: string): Order & { items: any[]; timeline: any[] } => ({
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const generateMockOrderDetail = (
+  orderId: string
+): Order & { items: any[]; timeline: any[] } => ({
   id: parseInt(orderId),
   order_no: `ORD${Date.now()}`,
   user_id: 1,
-  total_amount: 599.00,
+  total_amount: 599.0,
   status: 'processing',
   created_at: new Date().toISOString(),
   items: [
@@ -325,7 +338,7 @@ const generateMockOrderDetail = (orderId: string): Order & { items: any[]; timel
       product_id: 1,
       product_name: '精品商品 A',
       product_image: '/placeholder.png',
-      price: 299.00,
+      price: 299.0,
       quantity: 1
     },
     {
@@ -333,7 +346,7 @@ const generateMockOrderDetail = (orderId: string): Order & { items: any[]; timel
       product_id: 2,
       product_name: '精品商品 B',
       product_image: '/placeholder.png',
-      price: 150.00,
+      price: 150.0,
       quantity: 2
     }
   ],
@@ -372,11 +385,13 @@ const getStatusText = (status: string): string => {
   return statusMap[status] || status
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const OrderDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
-  const [order, setOrder] = useState<(Order & { items: any[]; timeline: any[] }) | null>(null)
+  const [order, setOrder] = useState<
+    (Order & { items: any[]; timeline: any[] }) | null
+  >(null)
   const [cartCount, setCartCount] = useState(0)
 
   useEffect(() => {
@@ -384,13 +399,16 @@ const OrderDetail: React.FC = () => {
       try {
         setLoading(true)
         // 模拟获取订单详情
-        await new Promise(resolve => setTimeout(resolve, 500))
+        await new Promise((resolve) => setTimeout(resolve, 500))
         const mockOrder = generateMockOrderDetail(id || '1')
         setOrder(mockOrder)
 
         // 获取购物车数量
         const cartData = await getCart()
-        const totalCount = cartData.items.reduce((sum, item) => sum + item.quantity, 0)
+        const totalCount = cartData.items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        )
         setCartCount(totalCount)
       } catch (err) {
         console.error('Failed to load order:', err)
@@ -460,9 +478,7 @@ const OrderDetail: React.FC = () => {
                 <NavLink href="/products">全部商品</NavLink>
                 <NavLink href="/categories">分类</NavLink>
                 <NavLink href="/deals">优惠</NavLink>
-                <CartButton href="/cart">
-                  🛒 购物车
-                </CartButton>
+                <CartButton href="/cart">🛒 购物车</CartButton>
                 {isLoggedIn() ? (
                   <AuthLink href="/profile">个人中心</AuthLink>
                 ) : (
@@ -529,7 +545,14 @@ const OrderDetail: React.FC = () => {
             <BackLink to="/profile">← 返回个人中心</BackLink>
 
             <OrderHeader>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '16px'
+                }}
+              >
                 <OrderTitle>订单详情</OrderTitle>
                 <OrderStatus $status={order.status}>
                   {getStatusText(order.status)}
@@ -542,11 +565,15 @@ const OrderDetail: React.FC = () => {
                 </MetaItem>
                 <MetaItem>
                   <MetaLabel>下单时间</MetaLabel>
-                  <MetaValue>{new Date(order.created_at).toLocaleString()}</MetaValue>
+                  <MetaValue>
+                    {new Date(order.created_at).toLocaleString()}
+                  </MetaValue>
                 </MetaItem>
                 <MetaItem>
                   <MetaLabel>订单金额</MetaLabel>
-                  <MetaValue style={{ color: '#ff4d4f' }}>¥{order.total_amount.toFixed(2)}</MetaValue>
+                  <MetaValue style={{ color: '#ff4d4f' }}>
+                    ¥{order.total_amount.toFixed(2)}
+                  </MetaValue>
                 </MetaItem>
               </OrderMeta>
             </OrderHeader>
@@ -583,7 +610,10 @@ const OrderDetail: React.FC = () => {
               <ProductList>
                 {order.items.map((item) => (
                   <ProductItem key={item.id}>
-                    <ProductImage src={item.product_image} alt={item.product_name} />
+                    <ProductImage
+                      src={item.product_image}
+                      alt={item.product_name}
+                    />
                     <ProductInfo>
                       <ProductName>{item.product_name}</ProductName>
                       <ProductPrice>¥{item.price.toFixed(2)}</ProductPrice>
@@ -624,7 +654,9 @@ const OrderDetail: React.FC = () => {
               {order.status === 'shipped' && (
                 <Button $type="primary">确认收货</Button>
               )}
-              <Button $type="default" as={Link} to="/products">再次购买</Button>
+              <Button $type="default" as={Link} to="/products">
+                再次购买
+              </Button>
               <Button $type="default">申请售后</Button>
             </ActionBar>
           </OrderDetailContainer>

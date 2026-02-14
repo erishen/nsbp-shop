@@ -11,20 +11,20 @@ export const GRAPHQL_CONFIG = {
   csrfEndpoint: `${NSGM_SHOP_API}/csrf-token`,
   defaultHeaders: {
     'Content-Type': 'application/json',
-    Accept: 'application/json',
+    Accept: 'application/json'
   },
   csrf: {
     enabled: true,
     tokenHeader: 'X-CSRF-Token',
-    cookieName: 'csrfToken',
-  },
+    cookieName: 'csrfToken'
+  }
 }
 
 // GraphQL 操作类型
 export enum GraphQLOperationType {
   QUERY = 'query',
   MUTATION = 'mutation',
-  SUBSCRIPTION = 'subscription',
+  SUBSCRIPTION = 'subscription'
 }
 
 // GraphQL 工具函数
@@ -32,7 +32,8 @@ export const GraphQLUtils = {
   getOperationType(query: string): GraphQLOperationType {
     const trimmed = query.trim().toLowerCase()
     if (trimmed.startsWith('mutation')) return GraphQLOperationType.MUTATION
-    if (trimmed.startsWith('subscription')) return GraphQLOperationType.SUBSCRIPTION
+    if (trimmed.startsWith('subscription'))
+      return GraphQLOperationType.SUBSCRIPTION
     return GraphQLOperationType.QUERY
   },
 
@@ -46,21 +47,23 @@ export const GraphQLUtils = {
       const trimmed = query.trim()
       return (
         trimmed.length > 0 &&
-        (trimmed.includes('query') || trimmed.includes('mutation') || trimmed.includes('subscription')) &&
+        (trimmed.includes('query') ||
+          trimmed.includes('mutation') ||
+          trimmed.includes('subscription')) &&
         trimmed.includes('{') &&
         trimmed.includes('}')
       )
     } catch {
       return false
     }
-  },
+  }
 }
 
 // 获取 CSRF Token
 export const getCSRFToken = async (): Promise<string> => {
   try {
     const response = await axios.get(GRAPHQL_CONFIG.csrfEndpoint, {
-      withCredentials: true,
+      withCredentials: true
     })
 
     if (!response.data?.csrfToken) {
@@ -75,6 +78,7 @@ export const getCSRFToken = async (): Promise<string> => {
 }
 
 // GraphQL 主函数
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const graphqlRequest = async (query: string, variables: any = {}) => {
   if (!GraphQLUtils.isValidQuery(query)) {
     throw new Error('Invalid GraphQL query syntax')
@@ -85,7 +89,7 @@ export const graphqlRequest = async (query: string, variables: any = {}) => {
     const isMutation = operationType === GraphQLOperationType.MUTATION
 
     const headers: Record<string, string> = {
-      ...GRAPHQL_CONFIG.defaultHeaders,
+      ...GRAPHQL_CONFIG.defaultHeaders
     }
 
     let response
@@ -114,10 +118,13 @@ export const graphqlRequest = async (query: string, variables: any = {}) => {
         params.append('variables', JSON.stringify(variables))
       }
 
-      response = await axios.get(`${GRAPHQL_CONFIG.endpoint}?${params.toString()}`, {
-        headers: { Accept: 'application/json' },
-        withCredentials: true,
-      })
+      response = await axios.get(
+        `${GRAPHQL_CONFIG.endpoint}?${params.toString()}`,
+        {
+          headers: { Accept: 'application/json' },
+          withCredentials: true
+        }
+      )
     }
 
     if (response?.data) {
@@ -132,21 +139,26 @@ export const graphqlRequest = async (query: string, variables: any = {}) => {
 }
 
 // 快捷函数
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const graphqlQuery = async (query: string, variables?: any) => {
   return graphqlRequest(query, variables)
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const graphqlMutation = async (mutation: string, variables?: any) => {
   return graphqlRequest(mutation, variables)
 }
 
 // 检查错误
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const hasGraphqlErrors = (response: any): boolean => {
   return !!(response?.errors && response.errors.length > 0)
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getGraphqlErrorMessage = (response: any): string => {
   if (hasGraphqlErrors(response)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return response.errors.map((error: any) => error.message).join('; ')
   }
   return ''

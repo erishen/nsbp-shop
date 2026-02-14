@@ -61,11 +61,12 @@ const Button = styled.button<{ $type?: 'primary' | 'default' }>`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: ${props => props.$type === 'primary' ? '#667eea' : '#f5f5f5'};
-  color: ${props => props.$type === 'primary' ? 'white' : '#333'};
+  background: ${(props) => (props.$type === 'primary' ? '#667eea' : '#f5f5f5')};
+  color: ${(props) => (props.$type === 'primary' ? 'white' : '#333')};
 
   &:hover {
-    background: ${props => props.$type === 'primary' ? '#5568d3' : '#e8e8e8'};
+    background: ${(props) =>
+      props.$type === 'primary' ? '#5568d3' : '#e8e8e8'};
   }
 `
 
@@ -114,7 +115,7 @@ const UserInfo: React.FC = () => {
     nickname: '管理员',
     real_name: '系统管理员',
     email: 'admin@nsgm-shop.com',
-    phone: '13800138000',
+    phone: '13800138000'
   })
 
   useEffect(() => {
@@ -138,7 +139,10 @@ const UserInfo: React.FC = () => {
         <Container>
           <AvatarSection>
             <Avatar>
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=admin" alt="头像" />
+              <img
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=admin"
+                alt="头像"
+              />
             </Avatar>
             <UploadButton>更换头像</UploadButton>
           </AvatarSection>
@@ -154,7 +158,9 @@ const UserInfo: React.FC = () => {
               <Input
                 type="text"
                 value={userInfo.nickname}
-                onChange={(e) => setUserInfo({ ...userInfo, nickname: e.target.value })}
+                onChange={(e) =>
+                  setUserInfo({ ...userInfo, nickname: e.target.value })
+                }
               />
             </FormGroup>
             <FormGroup>
@@ -162,7 +168,9 @@ const UserInfo: React.FC = () => {
               <Input
                 type="text"
                 value={userInfo.real_name}
-                onChange={(e) => setUserInfo({ ...userInfo, real_name: e.target.value })}
+                onChange={(e) =>
+                  setUserInfo({ ...userInfo, real_name: e.target.value })
+                }
               />
             </FormGroup>
           </Section>
@@ -174,7 +182,9 @@ const UserInfo: React.FC = () => {
               <Input
                 type="tel"
                 value={userInfo.phone}
-                onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })}
+                onChange={(e) =>
+                  setUserInfo({ ...userInfo, phone: e.target.value })
+                }
               />
             </FormGroup>
             <FormGroup>
@@ -182,12 +192,16 @@ const UserInfo: React.FC = () => {
               <Input
                 type="email"
                 value={userInfo.email}
-                onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+                onChange={(e) =>
+                  setUserInfo({ ...userInfo, email: e.target.value })
+                }
               />
             </FormGroup>
           </Section>
 
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end' }}>
+          <div
+            style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end' }}
+          >
             <Button type="default">取消</Button>
             <Button type="primary">保存</Button>
           </div>

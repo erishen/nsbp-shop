@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { Helmet } from 'react-helmet'
-import { logout, isLoggedIn, getUserId, type User } from '../services/shop'
+import { logout, isLoggedIn } from '../services/shop'
 import {
   GlobalStyle,
   ShopLayout,
@@ -12,7 +12,6 @@ import {
   NavMenu,
   NavLink,
   CartButton,
-  CartBadge,
   AuthLink,
   ShopMain,
   ShopFooter
@@ -39,7 +38,7 @@ const Sidebar = styled.div`
   background: white;
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 `
 
 const SidebarTitle = styled.h2`
@@ -62,13 +61,13 @@ const MenuItem = styled.li<{ $active?: boolean }>`
     display: block;
     padding: 12px 16px;
     border-radius: 8px;
-    color: ${props => props.$active ? '#667eea' : '#666'};
+    color: ${(props) => (props.$active ? '#667eea' : '#666')};
     text-decoration: none;
     transition: all 0.3s ease;
-    background: ${props => props.$active ? '#f0f5ff' : 'transparent'};
+    background: ${(props) => (props.$active ? '#f0f5ff' : 'transparent')};
 
     &:hover {
-      background: ${props => props.$active ? '#e0eaff' : '#f5f5f5'};
+      background: ${(props) => (props.$active ? '#e0eaff' : '#f5f5f5')};
       color: #667eea;
     }
   }
@@ -78,7 +77,7 @@ const Content = styled.div`
   background: white;
   border-radius: 12px;
   padding: 32px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 `
 
 const Title = styled.h1`
@@ -92,7 +91,7 @@ const menuItems = [
   { path: '/profile', label: '个人信息', icon: '👤' },
   { path: '/profile/address', label: '收货地址', icon: '📍' },
   { path: '/profile/orders', label: '我的订单', icon: '📦' },
-  { path: '/profile/security', label: '安全设置', icon: '🔒' },
+  { path: '/profile/security', label: '安全设置', icon: '🔒' }
 ]
 
 const Profile: React.FC = () => {
@@ -129,9 +128,7 @@ const Profile: React.FC = () => {
               <NavLink href="/products">全部商品</NavLink>
               <NavLink href="/categories">分类</NavLink>
               <NavLink href="/deals">优惠</NavLink>
-              <CartButton href="/cart">
-                🛒 购物车
-              </CartButton>
+              <CartButton href="/cart">🛒 购物车</CartButton>
               <AuthLink onClick={handleLogout}>退出</AuthLink>
             </NavMenu>
           </HeaderContent>
@@ -147,9 +144,15 @@ const Profile: React.FC = () => {
                   {menuItems.map((item) => (
                     <MenuItem
                       key={item.path}
-                      $active={location.pathname === item.path || (item.path === '/profile' && location.pathname === '/profile')}
+                      $active={
+                        location.pathname === item.path ||
+                        (item.path === '/profile' &&
+                          location.pathname === '/profile')
+                      }
                     >
-                      <Link to={item.path}>{item.icon} {item.label}</Link>
+                      <Link to={item.path}>
+                        {item.icon} {item.label}
+                      </Link>
                     </MenuItem>
                   ))}
                 </MenuList>

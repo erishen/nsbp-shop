@@ -1,6 +1,6 @@
 // Shop Service - 调用 nsgm-shop GraphQL 服务
 
-import { graphqlRequest, graphqlQuery, graphqlMutation } from '../utils/graphql'
+import { graphqlQuery, graphqlMutation } from '../utils/graphql'
 
 // ==================== 类型定义 ====================
 
@@ -87,7 +87,10 @@ export interface GraphQLResponse<T> {
 
 // ==================== Banner 服务 ====================
 
-export const getBanners = async (page = 0, pageSize = 10): Promise<PaginationResult<Banner>> => {
+export const getBanners = async (
+  page = 0,
+  pageSize = 10
+): Promise<PaginationResult<Banner>> => {
   const query = `
     query ($page: Int, $pageSize: Int) {
       banner(page: $page, pageSize: $pageSize) {
@@ -103,10 +106,11 @@ export const getBanners = async (page = 0, pageSize = 10): Promise<PaginationRes
     }
   `
 
-  const response: GraphQLResponse<{ banner: PaginationResult<Banner> }> = await graphqlQuery(query, {
-    page,
-    pageSize,
-  })
+  const response: GraphQLResponse<{ banner: PaginationResult<Banner> }> =
+    await graphqlQuery(query, {
+      page,
+      pageSize
+    })
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -128,7 +132,10 @@ export const getBannerById = async (id: number): Promise<Banner> => {
     }
   `
 
-  const response: GraphQLResponse<{ bannerGet: Banner }> = await graphqlQuery(query, { id })
+  const response: GraphQLResponse<{ bannerGet: Banner }> = await graphqlQuery(
+    query,
+    { id }
+  )
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -139,7 +146,10 @@ export const getBannerById = async (id: number): Promise<Banner> => {
 
 // ==================== Product 服务 ====================
 
-export const getProducts = async (page = 0, pageSize = 10): Promise<PaginationResult<Product>> => {
+export const getProducts = async (
+  page = 0,
+  pageSize = 10
+): Promise<PaginationResult<Product>> => {
   const query = `
     query ($page: Int, $pageSize: Int) {
       product(page: $page, pageSize: $pageSize) {
@@ -161,10 +171,11 @@ export const getProducts = async (page = 0, pageSize = 10): Promise<PaginationRe
     }
   `
 
-  const response: GraphQLResponse<{ product: PaginationResult<Product> }> = await graphqlQuery(query, {
-    page,
-    pageSize,
-  })
+  const response: GraphQLResponse<{ product: PaginationResult<Product> }> =
+    await graphqlQuery(query, {
+      page,
+      pageSize
+    })
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -192,7 +203,10 @@ export const getProductById = async (id: number): Promise<Product> => {
     }
   `
 
-  const response: GraphQLResponse<{ productGet: Product }> = await graphqlQuery(query, { id })
+  const response: GraphQLResponse<{ productGet: Product }> = await graphqlQuery(
+    query,
+    { id }
+  )
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -228,14 +242,16 @@ export const searchProducts = async (
     }
   `
 
-  const searchData: any = {}
+  const searchData: { name?: string; category_id?: number } = {}
   if (keyword) searchData.name = keyword
   if (categoryId) searchData.category_id = categoryId
 
-  const response: GraphQLResponse<{ productSearch: PaginationResult<Product> }> = await graphqlQuery(query, {
+  const response: GraphQLResponse<{
+    productSearch: PaginationResult<Product>
+  }> = await graphqlQuery(query, {
     page,
     pageSize,
-    data: searchData,
+    data: searchData
   })
 
   if (response.errors) {
@@ -247,7 +263,10 @@ export const searchProducts = async (
 
 // ==================== Category 服务 ====================
 
-export const getCategories = async (page = 0, pageSize = 100): Promise<PaginationResult<Category>> => {
+export const getCategories = async (
+  page = 0,
+  pageSize = 100
+): Promise<PaginationResult<Category>> => {
   const query = `
     query ($page: Int, $pageSize: Int) {
       category(page: $page, pageSize: $pageSize) {
@@ -264,10 +283,11 @@ export const getCategories = async (page = 0, pageSize = 100): Promise<Paginatio
     }
   `
 
-  const response: GraphQLResponse<{ category: PaginationResult<Category> }> = await graphqlQuery(query, {
-    page,
-    pageSize,
-  })
+  const response: GraphQLResponse<{ category: PaginationResult<Category> }> =
+    await graphqlQuery(query, {
+      page,
+      pageSize
+    })
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -290,7 +310,8 @@ export const getCategoryById = async (id: number): Promise<Category> => {
     }
   `
 
-  const response: GraphQLResponse<{ categoryGet: Category }> = await graphqlQuery(query, { id })
+  const response: GraphQLResponse<{ categoryGet: Category }> =
+    await graphqlQuery(query, { id })
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -301,7 +322,10 @@ export const getCategoryById = async (id: number): Promise<Category> => {
 
 // ==================== Cart 服务 ====================
 
-export const getCart = async (page = 0, pageSize = 100): Promise<PaginationResult<CartItem>> => {
+export const getCart = async (
+  page = 0,
+  pageSize = 100
+): Promise<PaginationResult<CartItem>> => {
   const query = `
     query ($page: Int, $pageSize: Int) {
       cart(page: $page, pageSize: $pageSize) {
@@ -316,10 +340,11 @@ export const getCart = async (page = 0, pageSize = 100): Promise<PaginationResul
     }
   `
 
-  const response: GraphQLResponse<{ cart: PaginationResult<CartItem> }> = await graphqlQuery(query, {
-    page,
-    pageSize,
-  })
+  const response: GraphQLResponse<{ cart: PaginationResult<CartItem> }> =
+    await graphqlQuery(query, {
+      page,
+      pageSize
+    })
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -328,19 +353,25 @@ export const getCart = async (page = 0, pageSize = 100): Promise<PaginationResul
   return response.data!.cart
 }
 
-export const addToCart = async (productId: number, quantity: number): Promise<number> => {
+export const addToCart = async (
+  productId: number,
+  quantity: number
+): Promise<number> => {
   const mutation = `
     mutation ($data: CartAddInput) {
       cartAdd(data: $data)
     }
   `
 
-  const response: GraphQLResponse<{ cartAdd: number }> = await graphqlMutation(mutation, {
-    data: {
-      product_id: productId,
-      quantity,
-    },
-  })
+  const response: GraphQLResponse<{ cartAdd: number }> = await graphqlMutation(
+    mutation,
+    {
+      data: {
+        product_id: productId,
+        quantity
+      }
+    }
+  )
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -349,17 +380,21 @@ export const addToCart = async (productId: number, quantity: number): Promise<nu
   return response.data!.cartAdd
 }
 
-export const updateCartItem = async (id: number, quantity: number): Promise<number> => {
+export const updateCartItem = async (
+  id: number,
+  quantity: number
+): Promise<number> => {
   const mutation = `
     mutation ($id: Int, $data: CartAddInput) {
       cartUpdate(id: $id, data: $data)
     }
   `
 
-  const response: GraphQLResponse<{ cartUpdate: number }> = await graphqlMutation(mutation, {
-    id,
-    data: { quantity },
-  })
+  const response: GraphQLResponse<{ cartUpdate: number }> =
+    await graphqlMutation(mutation, {
+      id,
+      data: { quantity }
+    })
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -375,7 +410,8 @@ export const removeFromCart = async (id: number): Promise<number> => {
     }
   `
 
-  const response: GraphQLResponse<{ cartDelete: number }> = await graphqlMutation(mutation, { id })
+  const response: GraphQLResponse<{ cartDelete: number }> =
+    await graphqlMutation(mutation, { id })
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -391,7 +427,8 @@ export const clearCart = async (ids: number[]): Promise<number> => {
     }
   `
 
-  const response: GraphQLResponse<{ cartBatchDelete: number }> = await graphqlMutation(mutation, { ids })
+  const response: GraphQLResponse<{ cartBatchDelete: number }> =
+    await graphqlMutation(mutation, { ids })
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -413,27 +450,32 @@ export interface CreateOrderData {
   remark?: string
 }
 
-export const createOrder = async (orderData: CreateOrderData): Promise<number> => {
+export const createOrder = async (
+  orderData: CreateOrderData
+): Promise<number> => {
   const mutation = `
     mutation ($data: OrderAddInput) {
       orderAdd(data: $data)
     }
   `
 
-  const response: GraphQLResponse<{ orderAdd: number }> = await graphqlMutation(mutation, {
-    data: {
-      user_id: orderData.user_id,
-      order_no: orderData.order_no,
-      total_amount: orderData.total_amount,
-      pay_amount: orderData.pay_amount,
-      receiver_name: orderData.receiver_name,
-      receiver_phone: orderData.receiver_phone,
-      receiver_address: orderData.receiver_address,
-      remark: orderData.remark || '',
-      status: 'pending',
-      pay_status: 'unpaid',
-    },
-  })
+  const response: GraphQLResponse<{ orderAdd: number }> = await graphqlMutation(
+    mutation,
+    {
+      data: {
+        user_id: orderData.user_id,
+        order_no: orderData.order_no,
+        total_amount: orderData.total_amount,
+        pay_amount: orderData.pay_amount,
+        receiver_name: orderData.receiver_name,
+        receiver_phone: orderData.receiver_phone,
+        receiver_address: orderData.receiver_address,
+        remark: orderData.remark || '',
+        status: 'pending',
+        pay_status: 'unpaid'
+      }
+    }
+  )
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -442,7 +484,11 @@ export const createOrder = async (orderData: CreateOrderData): Promise<number> =
   return response.data!.orderAdd
 }
 
-export const getOrders = async (page = 0, pageSize = 10, user_id?: number): Promise<PaginationResult<Order>> => {
+export const getOrders = async (
+  page = 0,
+  pageSize = 10,
+  user_id?: number
+): Promise<PaginationResult<Order>> => {
   const query = `
     query ($page: Int, $pageSize: Int, $user_id: Int) {
       order(page: $page, pageSize: $pageSize, user_id: $user_id) {
@@ -471,16 +517,17 @@ export const getOrders = async (page = 0, pageSize = 10, user_id?: number): Prom
     }
   `
 
-  const variables: any = {
+  const variables: { page: number; pageSize: number; user_id?: number } = {
     page,
-    pageSize,
+    pageSize
   }
 
   if (user_id !== undefined) {
     variables.user_id = user_id
   }
 
-  const response: GraphQLResponse<{ order: PaginationResult<Order> }> = await graphqlQuery(query, variables)
+  const response: GraphQLResponse<{ order: PaginationResult<Order> }> =
+    await graphqlQuery(query, variables)
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -550,7 +597,7 @@ export const getHomePageData = async (): Promise<HomePageData> => {
   return {
     banners: response.data!.banner.items,
     featuredProducts: response.data!.product.items,
-    categories: response.data!.category.items,
+    categories: response.data!.category.items
   }
 }
 
@@ -560,7 +607,11 @@ export interface UserSearchInput {
   phone?: string
 }
 
-export const searchUsers = async (searchData: UserSearchInput, page = 0, pageSize = 10): Promise<PaginationResult<User>> => {
+export const searchUsers = async (
+  searchData: UserSearchInput,
+  page = 0,
+  pageSize = 10
+): Promise<PaginationResult<User>> => {
   const query = `
     query ($page: Int, $pageSize: Int, $data: UserSearchInput) {
       userSearch(page: $page, pageSize: $pageSize, data: $data) {
@@ -579,11 +630,12 @@ export const searchUsers = async (searchData: UserSearchInput, page = 0, pageSiz
     }
   `
 
-  const response: GraphQLResponse<{ userSearch: PaginationResult<User> }> = await graphqlQuery(query, {
-    page,
-    pageSize,
-    data: searchData,
-  })
+  const response: GraphQLResponse<{ userSearch: PaginationResult<User> }> =
+    await graphqlQuery(query, {
+      page,
+      pageSize,
+      data: searchData
+    })
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -594,17 +646,23 @@ export const searchUsers = async (searchData: UserSearchInput, page = 0, pageSiz
 
 // ==================== Auth 服务 ====================
 
-export const login = async (username: string, password: string): Promise<string> => {
+export const login = async (
+  username: string,
+  password: string
+): Promise<string> => {
   const mutation = `
     mutation ($username: String, $password: String) {
       login(username: $username, password: $password)
     }
   `
 
-  const response: GraphQLResponse<{ login: string }> = await graphqlMutation(mutation, {
-    username,
-    password,
-  })
+  const response: GraphQLResponse<{ login: string }> = await graphqlMutation(
+    mutation,
+    {
+      username,
+      password
+    }
+  )
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -640,16 +698,19 @@ export const register = async (data: {
     }
   `
 
-  const response: GraphQLResponse<{ userAdd: number }> = await graphqlMutation(mutation, {
-    data: {
-      username: data.username,
-      password: data.password,
-      nickname: data.nickname || data.username,
-      email: data.email,
-      phone: data.phone,
-      status: 'active',
-    },
-  })
+  const response: GraphQLResponse<{ userAdd: number }> = await graphqlMutation(
+    mutation,
+    {
+      data: {
+        username: data.username,
+        password: data.password,
+        nickname: data.nickname || data.username,
+        email: data.email,
+        phone: data.phone,
+        status: 'active'
+      }
+    }
+  )
 
   if (response.errors) {
     throw new Error(response.errors[0].message)
@@ -695,6 +756,7 @@ export const getUserId = (): number | null => {
 
 export const isLoggedIn = (): boolean => {
   const token = getToken()
+  // eslint-disable-next-line no-console
   console.log('isLoggedIn token:', token)
   return token !== null
 }

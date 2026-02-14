@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import {
   GlobalStyle,
   ShopLayout,
@@ -27,15 +27,14 @@ import {
   updateCartItem,
   removeFromCart,
   isLoggedIn,
-  type CartItem as CartItemType,
-  type Product,
+  type Product
 } from '../services/shop'
 
 const CartContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 24px;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
@@ -44,7 +43,7 @@ const CartContainer = styled.div`
 const CartList = styled.div`
   background: white;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 `
 
 const CartHeader = styled.div`
@@ -56,7 +55,7 @@ const CartHeader = styled.div`
   font-weight: 500;
   color: #666;
   font-size: 14px;
-  
+
   @media (max-width: 768px) {
     display: none;
   }
@@ -69,7 +68,7 @@ const CartItem = styled.div`
   padding: 16px 24px;
   border-bottom: 1px solid #f0f0f0;
   align-items: center;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: 80px 1fr;
     gap: 12px;
@@ -94,7 +93,7 @@ const ItemName = styled(Link)`
   text-decoration: none;
   display: block;
   margin-bottom: 4px;
-  
+
   &:hover {
     color: #667eea;
   }
@@ -109,7 +108,7 @@ const ItemPrice = styled.div`
   font-size: 16px;
   color: #ff4d4f;
   font-weight: 500;
-  
+
   @media (max-width: 768px) {
     margin-top: 8px;
   }
@@ -131,7 +130,7 @@ const QuantityButton = styled.button`
   background: #f5f5f5;
   cursor: pointer;
   font-size: 16px;
-  
+
   &:hover {
     background: #e8e8e8;
   }
@@ -151,7 +150,7 @@ const DeleteButton = styled.button`
   color: #999;
   cursor: pointer;
   font-size: 18px;
-  
+
   &:hover {
     color: #ff4d4f;
   }
@@ -161,7 +160,7 @@ const SummaryCard = styled.div`
   background: white;
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   height: fit-content;
 `
 
@@ -188,7 +187,7 @@ const SummaryTotal = styled.div`
   border-top: 1px solid #f0f0f0;
   font-size: 18px;
   font-weight: bold;
-  
+
   .price {
     color: #ff4d4f;
   }
@@ -218,10 +217,10 @@ const Cart: React.FC = () => {
       try {
         setLoading(true)
         setError(null)
-        
+
         // 获取购物车列表
         const cartData = await getCart()
-        
+
         // 获取每个商品的详细信息
         const itemsWithProducts = await Promise.all(
           cartData.items.map(async (item) => {
@@ -234,7 +233,7 @@ const Cart: React.FC = () => {
             }
           })
         )
-        
+
         setCartItems(itemsWithProducts)
       } catch (err) {
         console.error('Failed to load cart:', err)
@@ -250,12 +249,12 @@ const Cart: React.FC = () => {
 
   const updateQuantity = async (id: number, quantity: number) => {
     if (quantity < 1) return
-    
+
     try {
       await updateCartItem(id, quantity)
-      setCartItems(items => items.map(item => 
-        item.id === id ? { ...item, quantity } : item
-      ))
+      setCartItems((items) =>
+        items.map((item) => (item.id === id ? { ...item, quantity } : item))
+      )
     } catch (err) {
       console.error('Failed to update cart:', err)
       alert('更新数量失败，请稍后重试')
@@ -265,14 +264,17 @@ const Cart: React.FC = () => {
   const removeItem = async (id: number) => {
     try {
       await removeFromCart(id)
-      setCartItems(items => items.filter(item => item.id !== id))
+      setCartItems((items) => items.filter((item) => item.id !== id))
     } catch (err) {
       console.error('Failed to remove from cart:', err)
       alert('删除商品失败，请稍后重试')
     }
   }
 
-  const totalPrice = cartItems.reduce((sum, item) => sum + (item.product?.price || 0) * item.quantity, 0)
+  const totalPrice = cartItems.reduce(
+    (sum, item) => sum + (item.product?.price || 0) * item.quantity,
+    0
+  )
   const totalCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
   if (loading) {
@@ -303,7 +305,7 @@ const Cart: React.FC = () => {
         <title>购物车 - 精品商城</title>
         <meta name="description" content="查看购物车商品" />
       </Helmet>
-      
+
       <ShopLayout>
         <ShopHeader>
           <HeaderContent>
@@ -330,21 +332,25 @@ const Cart: React.FC = () => {
         </ShopHeader>
 
         <ShopMain>
-          <h1 style={{ marginBottom: '24px', fontSize: '24px' }}>🛒 购物车 ({totalCount})</h1>
-          
+          <h1 style={{ marginBottom: '24px', fontSize: '24px' }}>
+            🛒 购物车 ({totalCount})
+          </h1>
+
           {error && (
-            <div style={{ 
-              padding: '12px 16px', 
-              background: '#fff2f0', 
-              border: '1px solid #ffccc7',
-              borderRadius: '8px',
-              marginBottom: '24px',
-              color: '#ff4d4f'
-            }}>
+            <div
+              style={{
+                padding: '12px 16px',
+                background: '#fff2f0',
+                border: '1px solid #ffccc7',
+                borderRadius: '8px',
+                marginBottom: '24px',
+                color: '#ff4d4f'
+              }}
+            >
               {error}
             </div>
           )}
-          
+
           {cartItems.length > 0 ? (
             <CartContainer>
               <CartList>
@@ -355,25 +361,52 @@ const Cart: React.FC = () => {
                   <div>数量</div>
                   <div></div>
                 </CartHeader>
-                {cartItems.map(item => (
+                {cartItems.map((item) => (
                   <CartItem key={item.id}>
-                    <ItemImage src={item.product?.image_url || 'https://via.placeholder.com/80'} alt={item.product?.name} />
+                    <ItemImage
+                      src={
+                        item.product?.image_url ||
+                        'https://via.placeholder.com/80'
+                      }
+                      alt={item.product?.name}
+                    />
                     <ItemInfo>
                       <ItemName to={`/shop/product/${item.product_id}`}>
                         {item.product?.name || '商品已下架'}
                       </ItemName>
-                      <ItemDesc>{item.product?.description?.substring(0, 30)}...</ItemDesc>
-                      <ItemPrice style={{ display: 'none' }} className="mobile-price">
+                      <ItemDesc>
+                        {item.product?.description?.substring(0, 30)}...
+                      </ItemDesc>
+                      <ItemPrice
+                        style={{ display: 'none' }}
+                        className="mobile-price"
+                      >
                         ¥{item.product?.price || 0}
                       </ItemPrice>
                     </ItemInfo>
-                    <ItemPrice className="desktop-price">¥{item.product?.price || 0}</ItemPrice>
+                    <ItemPrice className="desktop-price">
+                      ¥{item.product?.price || 0}
+                    </ItemPrice>
                     <QuantitySelector>
-                      <QuantityButton onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</QuantityButton>
+                      <QuantityButton
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity - 1)
+                        }
+                      >
+                        -
+                      </QuantityButton>
                       <QuantityInput value={item.quantity} readOnly />
-                      <QuantityButton onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</QuantityButton>
+                      <QuantityButton
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity + 1)
+                        }
+                      >
+                        +
+                      </QuantityButton>
                     </QuantitySelector>
-                    <DeleteButton onClick={() => removeItem(item.id)}>🗑️</DeleteButton>
+                    <DeleteButton onClick={() => removeItem(item.id)}>
+                      🗑️
+                    </DeleteButton>
                   </CartItem>
                 ))}
               </CartList>
@@ -396,7 +429,11 @@ const Cart: React.FC = () => {
                   <span>合计</span>
                   <span className="price">¥{totalPrice}</span>
                 </SummaryTotal>
-                <CheckoutButton $type="primary" $size="large" onClick={() => navigate('/checkout')}>
+                <CheckoutButton
+                  $type="primary"
+                  $size="large"
+                  onClick={() => navigate('/checkout')}
+                >
                   去结算
                 </CheckoutButton>
                 <Link to="/products">

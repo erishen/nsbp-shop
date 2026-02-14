@@ -38,22 +38,30 @@ import {
   EmptyIcon,
   EmptyText
 } from '../styled/shop'
-import { getCategories, getCategoryById, searchProducts, getCart, isLoggedIn, type Category as CategoryType, type Product } from '../services/shop'
+import {
+  getCategories,
+  getCategoryById,
+  searchProducts,
+  getCart,
+  isLoggedIn,
+  type Category as CategoryType,
+  type Product
+} from '../services/shop'
 
 const Breadcrumb = styled.div`
   margin-bottom: 24px;
   font-size: 14px;
   color: #666;
-  
+
   a {
     color: #667eea;
     text-decoration: none;
-    
+
     &:hover {
       text-decoration: underline;
     }
   }
-  
+
   span {
     margin: 0 8px;
   }
@@ -62,10 +70,12 @@ const Breadcrumb = styled.div`
 const Category: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const categoryId = id ? parseInt(id) : null
-  
+
   const [loading, setLoading] = useState(true)
   const [categories, setCategories] = useState<CategoryType[]>([])
-  const [currentCategory, setCurrentCategory] = useState<CategoryType | null>(null)
+  const [currentCategory, setCurrentCategory] = useState<CategoryType | null>(
+    null
+  )
   const [products, setProducts] = useState<Product[]>([])
   const [cartCount, setCartCount] = useState(0)
   const [error, setError] = useState<string | null>(null)
@@ -74,15 +84,20 @@ const Category: React.FC = () => {
     const fetchData = async () => {
       setLoading(true)
       setError(null)
-      
+
       try {
         if (categoryId) {
           // 获取当前分类信息
           const category = await getCategoryById(categoryId)
           setCurrentCategory(category)
-          
+
           // 获取该分类的商品
-          const productResult = await searchProducts(0, 20, undefined, categoryId)
+          const productResult = await searchProducts(
+            0,
+            20,
+            undefined,
+            categoryId
+          )
           setProducts(productResult.items)
         } else {
           // 获取全部分类
@@ -91,9 +106,10 @@ const Category: React.FC = () => {
           setCurrentCategory(null)
           setProducts([])
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error('Failed to load data:', err)
-        setError(`加载数据失败: ${err?.message || '请稍后重试'}`)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setError(`加载数据失败: ${(err as any)?.message || '请稍后重试'}`)
       } finally {
         setLoading(false)
       }
@@ -107,9 +123,12 @@ const Category: React.FC = () => {
     const fetchCartCount = async () => {
       try {
         const cartData = await getCart()
-        const totalCount = cartData.items.reduce((sum, item) => sum + item.quantity, 0)
+        const totalCount = cartData.items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        )
         setCartCount(totalCount)
-      } catch (err) {
+      } catch {
         setCartCount(0)
       }
     }
@@ -133,10 +152,13 @@ const Category: React.FC = () => {
     <>
       <GlobalStyle />
       <Helmet>
-        <title>{currentCategory ? `${currentCategory.name} - ` : ''}商品分类 - 精品商城</title>
+        <title>
+          {currentCategory ? `${currentCategory.name} - ` : ''}商品分类 -
+          精品商城
+        </title>
         <meta name="description" content="浏览商品分类，发现心仪好物" />
       </Helmet>
-      
+
       <ShopLayout>
         <ShopHeader>
           <HeaderContent>
@@ -144,7 +166,9 @@ const Category: React.FC = () => {
             <NavMenu>
               <NavLink href="/">首页</NavLink>
               <NavLink href="/products">全部商品</NavLink>
-              <NavLink href="/categories" $active>分类</NavLink>
+              <NavLink href="/categories" $active>
+                分类
+              </NavLink>
               <NavLink href="/deals">优惠</NavLink>
               {isLoggedIn() ? (
                 <AuthLink href="/profile">个人中心</AuthLink>
@@ -164,18 +188,20 @@ const Category: React.FC = () => {
 
         <ShopMain>
           {error && (
-            <div style={{ 
-              padding: '12px 16px', 
-              background: '#fff2f0', 
-              border: '1px solid #ffccc7',
-              borderRadius: '8px',
-              marginBottom: '24px',
-              color: '#ff4d4f'
-            }}>
+            <div
+              style={{
+                padding: '12px 16px',
+                background: '#fff2f0',
+                border: '1px solid #ffccc7',
+                borderRadius: '8px',
+                marginBottom: '24px',
+                color: '#ff4d4f'
+              }}
+            >
               {error}
               <div style={{ marginTop: '8px', fontSize: '12px' }}>
-                请检查: 1) nsgm-shop 是否运行在 http://localhost:8080
-                2) 浏览器控制台是否有 CORS 错误
+                请检查: 1) nsgm-shop 是否运行在 http://localhost:8080 2)
+                浏览器控制台是否有 CORS 错误
               </div>
             </div>
           )}
@@ -200,7 +226,7 @@ const Category: React.FC = () => {
               </SectionTitle>
               {categories.length > 0 ? (
                 <CategoryGrid>
-                  {categories.map(category => (
+                  {categories.map((category) => (
                     <Link key={category.id} to={`/category/${category.id}`}>
                       <CategoryCard>
                         <CategoryIcon>{category.icon || '📦'}</CategoryIcon>
@@ -221,20 +247,34 @@ const Category: React.FC = () => {
               <SectionTitle>
                 <span className="icon">📂</span>
                 {currentCategory.name}
-                <span style={{ fontSize: '14px', color: '#999', marginLeft: '12px' }}>
+                <span
+                  style={{
+                    fontSize: '14px',
+                    color: '#999',
+                    marginLeft: '12px'
+                  }}
+                >
                   共 {products.length} 件商品
                 </span>
               </SectionTitle>
               {products.length > 0 ? (
                 <ProductGrid>
-                  {products.map(product => (
+                  {products.map((product) => (
                     <Link key={product.id} to={`/shop/product/${product.id}`}>
                       <ProductCard>
                         <ProductImageWrapper>
-                          <ProductImage src={product.image_url} alt={product.name} />
+                          <ProductImage
+                            src={product.image_url}
+                            alt={product.name}
+                          />
                           {product.original_price > product.price && (
                             <ProductBadge>
-                              {Math.round(((product.original_price - product.price) / product.original_price) * 100)}% OFF
+                              {Math.round(
+                                ((product.original_price - product.price) /
+                                  product.original_price) *
+                                  100
+                              )}
+                              % OFF
                             </ProductBadge>
                           )}
                         </ProductImageWrapper>
@@ -243,7 +283,9 @@ const Category: React.FC = () => {
                           <ProductPrice>
                             <CurrentPrice>¥{product.price}</CurrentPrice>
                             {product.original_price > product.price && (
-                              <OriginalPrice>¥{product.original_price}</OriginalPrice>
+                              <OriginalPrice>
+                                ¥{product.original_price}
+                              </OriginalPrice>
                             )}
                           </ProductPrice>
                           <ProductSales>
@@ -260,15 +302,17 @@ const Category: React.FC = () => {
                   <EmptyIcon>📦</EmptyIcon>
                   <EmptyText>该分类暂无商品</EmptyText>
                   <Link to="/categories">
-                    <button style={{ 
-                      marginTop: '16px',
-                      padding: '8px 16px',
-                      background: '#667eea',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '6px',
-                      cursor: 'pointer'
-                    }}>
+                    <button
+                      style={{
+                        marginTop: '16px',
+                        padding: '8px 16px',
+                        background: '#667eea',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer'
+                      }}
+                    >
                       查看其他分类
                     </button>
                   </Link>

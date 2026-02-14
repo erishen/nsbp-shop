@@ -17,14 +17,14 @@ import {
   register,
   isLoggedIn,
   getUserId,
-  logout,
+  logout
 } from './shop'
 
 // Mock graphql utils
 jest.mock('../utils/graphql', () => ({
   graphqlRequest: jest.fn(),
   graphqlQuery: jest.fn(),
-  graphqlMutation: jest.fn(),
+  graphqlMutation: jest.fn()
 }))
 
 describe('Shop Service Tests', () => {

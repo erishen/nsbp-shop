@@ -1,7 +1,11 @@
 // 强制 webpack 重新编译 - 2025
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { searchProducts, getCart, isLoggedIn as checkIsLoggedIn } from '../services/shop'
+import {
+  searchProducts,
+  getCart,
+  isLoggedIn as checkIsLoggedIn
+} from '../services/shop'
 import type { Product } from '../services/shop'
 import {
   ShopLayout,
@@ -50,13 +54,12 @@ const Deals: React.FC = () => {
         setLoading(true)
         // 获取所有商品，筛选出有优惠的（original_price > price）
         const result = await searchProducts(0, 100)
-        const deals = result.items.filter(
-          (p) => p.original_price > p.price
-        )
+        const deals = result.items.filter((p) => p.original_price > p.price)
         setProducts(deals)
-      } catch (err: any) {
+      } catch (err) {
         console.error('Failed to load deals:', err)
-        setError(`加载优惠商品失败: ${err?.message || '请稍后重试'}`)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setError(`加载优惠商品失败: ${(err as any)?.message || '请稍后重试'}`)
       } finally {
         setLoading(false)
       }
@@ -65,7 +68,10 @@ const Deals: React.FC = () => {
     const loadCartCount = async () => {
       try {
         const cartData = await getCart()
-        const totalCount = cartData.items.reduce((sum, item) => sum + item.quantity, 0)
+        const totalCount = cartData.items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        )
         setCartCount(totalCount)
       } catch (err) {
         console.error('Failed to load cart count:', err)
@@ -89,24 +95,26 @@ const Deals: React.FC = () => {
       <ShopHeader>
         <HeaderContent>
           <Logo href="/">🛍️ 精品商城</Logo>
-            <NavMenu>
-              <NavLink href="/">首页</NavLink>
-              <NavLink href="/products">全部商品</NavLink>
-              <NavLink href="/categories">分类</NavLink>
-              <NavLink href="/deals" $active>优惠</NavLink>
-              {mounted && isLoggedIn ? (
-                <AuthLink href="/profile">个人中心</AuthLink>
-              ) : (
-                <>
-                  <AuthLink href="/login">登录</AuthLink>
-                  <AuthLink href="/register">注册</AuthLink>
-                </>
-              )}
-              <CartButton href="/cart">
-                🛒 购物车
-                {cartCount > 0 && <CartBadge>{cartCount}</CartBadge>}
-              </CartButton>
-            </NavMenu>
+          <NavMenu>
+            <NavLink href="/">首页</NavLink>
+            <NavLink href="/products">全部商品</NavLink>
+            <NavLink href="/categories">分类</NavLink>
+            <NavLink href="/deals" $active>
+              优惠
+            </NavLink>
+            {mounted && isLoggedIn ? (
+              <AuthLink href="/profile">个人中心</AuthLink>
+            ) : (
+              <>
+                <AuthLink href="/login">登录</AuthLink>
+                <AuthLink href="/register">注册</AuthLink>
+              </>
+            )}
+            <CartButton href="/cart">
+              🛒 购物车
+              {cartCount > 0 && <CartBadge>{cartCount}</CartBadge>}
+            </CartButton>
+          </NavMenu>
         </HeaderContent>
       </ShopHeader>
 
@@ -141,12 +149,20 @@ const Deals: React.FC = () => {
           {!loading && !error && products.length === 0 && (
             <EmptyContainer>
               <EmptyIcon>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
                   <path d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                 </svg>
               </EmptyIcon>
               <EmptyText>暂无优惠商品</EmptyText>
-              <a href="/products" style={{ color: '#667eea', textDecoration: 'none' }}>
+              <a
+                href="/products"
+                style={{ color: '#667eea', textDecoration: 'none' }}
+              >
                 去逛逛其他商品 →
               </a>
             </EmptyContainer>
@@ -175,7 +191,7 @@ const Deals: React.FC = () => {
                           src={product.image_url}
                           alt={product.name}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src =
+                            ;(e.target as HTMLImageElement).src =
                               'https://via.placeholder.com/300x300?text=No+Image'
                           }}
                         />

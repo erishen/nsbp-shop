@@ -27,7 +27,7 @@ const AuthContainer = styled.div`
 const AuthCard = styled.div`
   background: white;
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   padding: 40px;
   width: 100%;
   max-width: 420px;
@@ -73,15 +73,18 @@ const InputWrapper = styled.div`
 const Input = styled.input<{ $error?: boolean }>`
   width: 100%;
   padding: 12px 40px 12px 16px;
-  border: 1px solid ${props => props.$error ? '#ff4d4f' : '#d9d9d9'};
+  border: 1px solid ${(props) => (props.$error ? '#ff4d4f' : '#d9d9d9')};
   border-radius: 6px;
   font-size: 14px;
   transition: all 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$error ? '#ff4d4f' : '#667eea'};
-    box-shadow: ${props => props.$error ? '0 0 0 2px rgba(255,77,79,0.1)' : '0 0 0 2px rgba(102,126,234,0.1)'};
+    border-color: ${(props) => (props.$error ? '#ff4d4f' : '#667eea')};
+    box-shadow: ${(props) =>
+      props.$error
+        ? '0 0 0 2px rgba(255,77,79,0.1)'
+        : '0 0 0 2px rgba(102,126,234,0.1)'};
   }
 
   &:disabled {
@@ -178,16 +181,25 @@ const ShopLogin: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [fieldErrors, setFieldErrors] = useState<{ username?: string; password?: string }>({})
+  const [fieldErrors, setFieldErrors] = useState<{
+    username?: string
+    password?: string
+  }>({})
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value)
-    setFieldErrors(prev => ({ ...prev, username: validateUsername(e.target.value) }))
+    setFieldErrors((prev) => ({
+      ...prev,
+      username: validateUsername(e.target.value)
+    }))
   }
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value)
-    setFieldErrors(prev => ({ ...prev, password: validatePassword(e.target.value) }))
+    setFieldErrors((prev) => ({
+      ...prev,
+      password: validatePassword(e.target.value)
+    }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -208,8 +220,9 @@ const ShopLogin: React.FC = () => {
     try {
       await login(username, password)
       window.location.href = '/'
-    } catch (err: any) {
-      setError(err?.message || '登录失败，请稍后重试')
+    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setError((err as any)?.message || '登录失败，请稍后重试')
     } finally {
       setLoading(false)
     }
@@ -282,7 +295,13 @@ const ShopLogin: React.FC = () => {
                 </FormGroup>
 
                 <FormGroup>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
                     <RememberMe>
                       <input
                         type="checkbox"

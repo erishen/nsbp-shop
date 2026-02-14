@@ -126,8 +126,9 @@ export const render = (req: Request, res: Response) => {
         const styleTags = sheet.getStyleTags()
 
         // 开发环境：添加 LiveReload 脚本
-        const liveReloadScript = nodeEnv === 'development'
-          ? `<script>
+        const liveReloadScript =
+          nodeEnv === 'development'
+            ? `<script>
               (function() {
                 const clientId = Math.random().toString(36).substring(2, 15);
                 let lastHash = '';
@@ -197,7 +198,7 @@ export const render = (req: Request, res: Response) => {
                 checkUpdate();
               })();
             </script>`
-          : ''
+            : ''
 
         const html = `
               <!DOCTYPE html>

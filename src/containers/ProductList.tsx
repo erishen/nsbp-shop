@@ -31,10 +31,15 @@ import {
   LoadingSpinner,
   EmptyContainer,
   EmptyIcon,
-  EmptyText,
-  Button
+  EmptyText
 } from '../styled/shop'
-import { getProducts, searchProducts, getCart, isLoggedIn, type Product } from '../services/shop'
+import {
+  getProducts,
+  searchProducts,
+  getCart,
+  isLoggedIn,
+  type Product
+} from '../services/shop'
 
 const FilterBar = styled.div`
   display: flex;
@@ -61,7 +66,7 @@ const Select = styled.select`
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
-  
+
   &:focus {
     outline: none;
     border-color: #667eea;
@@ -77,18 +82,18 @@ const Pagination = styled.div`
 
 const PageButton = styled.button<{ $active?: boolean }>`
   padding: 8px 16px;
-  border: 1px solid ${props => props.$active ? '#667eea' : '#d9d9d9'};
-  background: ${props => props.$active ? '#667eea' : 'white'};
-  color: ${props => props.$active ? 'white' : '#333'};
+  border: 1px solid ${(props) => (props.$active ? '#667eea' : '#d9d9d9')};
+  background: ${(props) => (props.$active ? '#667eea' : 'white')};
+  color: ${(props) => (props.$active ? 'white' : '#333')};
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
-  
+
   &:hover {
     border-color: #667eea;
-    color: ${props => props.$active ? 'white' : '#667eea'};
+    color: ${(props) => (props.$active ? 'white' : '#667eea')};
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -98,7 +103,7 @@ const PageButton = styled.button<{ $active?: boolean }>`
 const ProductList: React.FC = () => {
   const [searchParams] = useSearchParams()
   const categoryId = searchParams.get('category')
-  
+
   const [loading, setLoading] = useState(true)
   const [products, setProducts] = useState<Product[]>([])
   const [totalCount, setTotalCount] = useState(0)
@@ -112,20 +117,25 @@ const ProductList: React.FC = () => {
     const fetchData = async () => {
       setLoading(true)
       setError(null)
-      
+
       try {
         let result
-        
+
         if (categoryId) {
           // 按分类搜索
-          result = await searchProducts(page, pageSize, undefined, parseInt(categoryId))
+          result = await searchProducts(
+            page,
+            pageSize,
+            undefined,
+            parseInt(categoryId)
+          )
         } else {
           // 获取全部商品
           result = await getProducts(page, pageSize)
         }
-        
+
         let sortedProducts = [...result.items]
-        
+
         // 客户端排序
         if (sortBy === 'price-asc') {
           sortedProducts.sort((a, b) => a.price - b.price)
@@ -134,7 +144,7 @@ const ProductList: React.FC = () => {
         } else if (sortBy === 'sales') {
           sortedProducts.sort((a, b) => b.sales - a.sales)
         }
-        
+
         setProducts(sortedProducts)
         setTotalCount(result.totalCounts)
       } catch (err) {
@@ -155,9 +165,12 @@ const ProductList: React.FC = () => {
     const fetchCartCount = async () => {
       try {
         const cartData = await getCart()
-        const totalCount = cartData.items.reduce((sum, item) => sum + item.quantity, 0)
+        const totalCount = cartData.items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        )
         setCartCount(totalCount)
-      } catch (err) {
+      } catch {
         setCartCount(0)
       }
     }
@@ -186,22 +199,24 @@ const ProductList: React.FC = () => {
         <title>全部商品 - 精品商城</title>
         <meta name="description" content="浏览全部商品，发现优质好物" />
       </Helmet>
-      
+
       <ShopLayout>
-          <ShopHeader>
-            <HeaderContent>
-              <Logo href="/">🛍️ 精品商城</Logo>
-              <NavMenu>
-                <NavLink href="/">首页</NavLink>
-                <NavLink href="/products" $active>全部商品</NavLink>
-                <NavLink href="/categories">分类</NavLink>
-                <NavLink href="/deals">优惠</NavLink>
-                {isLoggedIn() ? (
-                  <AuthLink href="/profile">个人中心</AuthLink>
-                ) : (
-                  <>
-                    <AuthLink href="/login">登录</AuthLink>
-                    <AuthLink href="/register">注册</AuthLink>
+        <ShopHeader>
+          <HeaderContent>
+            <Logo href="/">🛍️ 精品商城</Logo>
+            <NavMenu>
+              <NavLink href="/">首页</NavLink>
+              <NavLink href="/products" $active>
+                全部商品
+              </NavLink>
+              <NavLink href="/categories">分类</NavLink>
+              <NavLink href="/deals">优惠</NavLink>
+              {isLoggedIn() ? (
+                <AuthLink href="/profile">个人中心</AuthLink>
+              ) : (
+                <>
+                  <AuthLink href="/login">登录</AuthLink>
+                  <AuthLink href="/register">注册</AuthLink>
                 </>
               )}
               <CartButton href="/cart">
@@ -214,14 +229,16 @@ const ProductList: React.FC = () => {
 
         <ShopMain>
           {error && (
-            <div style={{ 
-              padding: '12px 16px', 
-              background: '#fff2f0', 
-              border: '1px solid #ffccc7',
-              borderRadius: '8px',
-              marginBottom: '24px',
-              color: '#ff4d4f'
-            }}>
+            <div
+              style={{
+                padding: '12px 16px',
+                background: '#fff2f0',
+                border: '1px solid #ffccc7',
+                borderRadius: '8px',
+                marginBottom: '24px',
+                color: '#ff4d4f'
+              }}
+            >
               {error}
             </div>
           )}
@@ -229,7 +246,9 @@ const ProductList: React.FC = () => {
           <SectionTitle>
             <span className="icon">📦</span>
             {categoryId ? '分类商品' : '全部商品'}
-            <span style={{ fontSize: '14px', color: '#999', marginLeft: '12px' }}>
+            <span
+              style={{ fontSize: '14px', color: '#999', marginLeft: '12px' }}
+            >
               共 {totalCount} 件商品
             </span>
           </SectionTitle>
@@ -237,7 +256,10 @@ const ProductList: React.FC = () => {
           <FilterBar>
             <FilterGroup>
               <FilterLabel>排序：</FilterLabel>
-              <Select value={sortBy} onChange={e => setSortBy(e.target.value)}>
+              <Select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
                 <option value="default">默认排序</option>
                 <option value="price-asc">价格从低到高</option>
                 <option value="price-desc">价格从高到低</option>
@@ -249,14 +271,22 @@ const ProductList: React.FC = () => {
           {products.length > 0 ? (
             <>
               <ProductGrid>
-                {products.map(product => (
+                {products.map((product) => (
                   <Link key={product.id} to={`/shop/product/${product.id}`}>
                     <ProductCard>
                       <ProductImageWrapper>
-                        <ProductImage src={product.image_url} alt={product.name} />
+                        <ProductImage
+                          src={product.image_url}
+                          alt={product.name}
+                        />
                         {product.original_price > product.price && (
                           <ProductBadge>
-                            {Math.round(((product.original_price - product.price) / product.original_price) * 100)}% OFF
+                            {Math.round(
+                              ((product.original_price - product.price) /
+                                product.original_price) *
+                                100
+                            )}
+                            % OFF
                           </ProductBadge>
                         )}
                       </ProductImageWrapper>
@@ -265,7 +295,9 @@ const ProductList: React.FC = () => {
                         <ProductPrice>
                           <CurrentPrice>¥{product.price}</CurrentPrice>
                           {product.original_price > product.price && (
-                            <OriginalPrice>¥{product.original_price}</OriginalPrice>
+                            <OriginalPrice>
+                              ¥{product.original_price}
+                            </OriginalPrice>
                           )}
                         </ProductPrice>
                         <ProductSales>
@@ -280,13 +312,13 @@ const ProductList: React.FC = () => {
 
               {totalPages > 1 && (
                 <Pagination>
-                  <PageButton 
-                    onClick={() => setPage(p => Math.max(0, p - 1))}
+                  <PageButton
+                    onClick={() => setPage((p) => Math.max(0, p - 1))}
                     disabled={page === 0}
                   >
                     上一页
                   </PageButton>
-                  
+
                   {Array.from({ length: totalPages }, (_, i) => (
                     <PageButton
                       key={i}
@@ -296,9 +328,11 @@ const ProductList: React.FC = () => {
                       {i + 1}
                     </PageButton>
                   ))}
-                  
-                  <PageButton 
-                    onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+
+                  <PageButton
+                    onClick={() =>
+                      setPage((p) => Math.min(totalPages - 1, p + 1))
+                    }
                     disabled={page >= totalPages - 1}
                   >
                     下一页

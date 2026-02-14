@@ -5,16 +5,11 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const { version } = require('../package.json')
 const LoadablePlugin = require('@loadable/webpack-plugin')
-const { createLoadableComponentsTransformer } = require('typescript-loadable-components-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 
 // 加载环境变量
 require('dotenv').config()
 require('dotenv').config({ path: '.env.local' })
-
-// const createStyledComponentsTransformer =
-//   require('typescript-plugin-styled-components').default
-// const styledComponentsTransformer = createStyledComponentsTransformer()
 
 module.exports = ({ mode, entry, server, init }) => {
   const config = {
@@ -41,58 +36,9 @@ module.exports = ({ mode, entry, server, init }) => {
     module: {
       rules: [
         {
-          test: /\.(ts|js)x?$/,
+          test: /\.(ts|tsx|js|jsx)$/,
           exclude: /node_modules/,
-          use: [
-            {
-              loader: 'babel-loader',
-              options: {
-                presets: [
-                  '@babel/preset-react',
-                  [
-                    '@babel/preset-env',
-                    {
-                      targets: {
-                        browsers: ['last 2 versions'] //对主流浏览器最近两个版本进行兼容
-                      }
-                    }
-                  ]
-                ],
-                plugins: [
-                  ['@babel/plugin-transform-class-properties'],
-                  ['@babel/plugin-transform-optional-chaining'],
-                  ["@babel/plugin-syntax-dynamic-import"],
-                  ['babel-plugin-styled-components'],
-                  ["@loadable/babel-plugin"]
-                ]
-              }
-            },
-            {
-              loader: 'ts-loader',
-              options: {
-                logInfoToStdOut: true,
-                logLevel: 'info',
-                transpileOnly: true,
-                configFile: path.resolve(__dirname, '../tsconfig.json'),
-                getCustomTransformers: (program) => {
-                  // console.log('getCustomTransformers', program)
-
-                  return {
-                    before: [
-                      //createLoadableComponentsTransformer(program, {}),
-                      // styledComponentsTransformer,
-                      createLoadableComponentsTransformer(program, {
-                        setComponentId: true,
-                        setDisplayName: true,
-                        minify: true,
-                      }),
-                      //loadableTransformer
-                    ]
-                  }
-                }
-              }
-            }
-          ]
+          use: ['babel-loader']
         },
         {
           test: /\.less$/,
@@ -167,12 +113,16 @@ module.exports = ({ mode, entry, server, init }) => {
       }),
       new webpack.DefinePlugin({
         'process.env.NSGM_SHOP_API': JSON.stringify(process.env.NSGM_SHOP_API || 'http://localhost:3000'),
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
       })
     ],
     optimization: {
       minimize: mode === 'production' || server ? true : false,
       minimizer: [`...`, new CssMinimizerPlugin()]
+    },
+    performance: {
+      hints: 'warning',
+      maxAssetSize: 500000,
+      maxEntrypointSize: 500000
     }
   }
 

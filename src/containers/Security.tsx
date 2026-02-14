@@ -12,7 +12,7 @@ const Card = styled.div`
   background: white;
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 `
 
 const CardHeader = styled.div`
@@ -58,7 +58,7 @@ const Label = styled.label`
 
 const Input = styled.input<{ $error?: boolean }>`
   padding: 12px 16px;
-  border: 1px solid ${props => props.$error ? '#ff4d4f' : '#e0e0e0'};
+  border: 1px solid ${(props) => (props.$error ? '#ff4d4f' : '#e0e0e0')};
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.3s ease;
@@ -77,21 +77,22 @@ const Button = styled.button<{ $type?: 'primary' | 'danger' }>`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: ${props =>
+  background: ${(props) =>
     props.$type === 'primary'
       ? '#667eea'
       : props.$type === 'danger'
-      ? '#ff4d4f'
-      : '#f5f5f5'};
-  color: ${props => props.$type === 'primary' || props.$type === 'danger' ? 'white' : '#333'};
+        ? '#ff4d4f'
+        : '#f5f5f5'};
+  color: ${(props) =>
+    props.$type === 'primary' || props.$type === 'danger' ? 'white' : '#333'};
 
   &:hover {
-    background: ${props =>
+    background: ${(props) =>
       props.$type === 'primary'
         ? '#5568d3'
         : props.$type === 'danger'
-        ? '#cf1322'
-        : '#e8e8e8'};
+          ? '#cf1322'
+          : '#e8e8e8'};
   }
 `
 
@@ -101,6 +102,7 @@ const Actions = styled.div`
   justify-content: flex-end;
 `
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ErrorMessage = styled.div`
   color: #ff4d4f;
   font-size: 13px;
@@ -140,7 +142,10 @@ const ChangeLink = styled.span`
 `
 
 const Security: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'password' | 'phone' | 'email'>('password')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [activeTab, setActiveTab] = useState<'password' | 'phone' | 'email'>(
+    'password'
+  )
   const [showPasswordForm, setShowPasswordForm] = useState(false)
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -182,7 +187,9 @@ const Security: React.FC = () => {
           <CardDesc>定期修改密码可以提高账号安全性</CardDesc>
 
           {!showPasswordForm ? (
-            <ChangeLink onClick={() => setShowPasswordForm(true)}>点击修改密码</ChangeLink>
+            <ChangeLink onClick={() => setShowPasswordForm(true)}>
+              点击修改密码
+            </ChangeLink>
           ) : (
             <Form onSubmit={handlePasswordSubmit}>
               <FormGroup>
@@ -198,7 +205,10 @@ const Security: React.FC = () => {
                 <Input type="password" placeholder="请再次输入新密码" />
               </FormGroup>
               <Actions>
-                <Button $variant="default" onClick={() => setShowPasswordForm(false)}>
+                <Button
+                  $variant="default"
+                  onClick={() => setShowPasswordForm(false)}
+                >
                   取消
                 </Button>
                 <Button $variant="primary">确认修改</Button>

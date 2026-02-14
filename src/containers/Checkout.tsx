@@ -22,7 +22,15 @@ import {
   EmptyIcon,
   EmptyText
 } from '../styled/shop'
-import { getCart, createOrder, isLoggedIn, clearCart, getUserId, type CartItem as CartItemType, type CreateOrderData } from '../services/shop'
+import {
+  getCart,
+  createOrder,
+  isLoggedIn,
+  clearCart,
+  getUserId,
+  type CartItem as CartItemType,
+  type CreateOrderData
+} from '../services/shop'
 
 const CheckoutContainer = styled.div`
   max-width: 1200px;
@@ -57,7 +65,7 @@ const SectionCard = styled.div`
   background: white;
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 `
 
 const SectionHeader = styled.div`
@@ -83,15 +91,15 @@ const AddressList = styled.div`
 `
 
 const AddressCard = styled.div<{ $selected?: boolean }>`
-  border: 2px solid ${props => props.$selected ? '#667eea' : '#f0f0f0'};
+  border: 2px solid ${(props) => (props.$selected ? '#667eea' : '#f0f0f0')};
   border-radius: 8px;
   padding: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: ${props => props.$selected ? '#f0f5ff' : 'white'};
+  background: ${(props) => (props.$selected ? '#f0f5ff' : 'white')};
 
   &:hover {
-    border-color: ${props => props.$selected ? '#667eea' : '#d9d9d9'};
+    border-color: ${(props) => (props.$selected ? '#667eea' : '#d9d9d9')};
   }
 `
 
@@ -197,7 +205,7 @@ const SummaryCard = styled.div`
   background: white;
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 24px;
 `
@@ -254,14 +262,14 @@ const PaymentMethod = styled.label<{ $selected?: boolean }>`
   align-items: center;
   gap: 12px;
   padding: 16px;
-  border: 2px solid ${props => props.$selected ? '#667eea' : '#f0f0f0'};
+  border: 2px solid ${(props) => (props.$selected ? '#667eea' : '#f0f0f0')};
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: ${props => props.$selected ? '#f0f5ff' : 'white'};
+  background: ${(props) => (props.$selected ? '#f0f5ff' : 'white')};
 
   &:hover {
-    border-color: ${props => props.$selected ? '#667eea' : '#d9d9d9'};
+    border-color: ${(props) => (props.$selected ? '#667eea' : '#d9d9d9')};
   }
 
   input {
@@ -336,7 +344,10 @@ const Checkout: React.FC = () => {
         setLoading(true)
         const cartData = await getCart()
         setCartItems(cartData.items)
-        const totalCount = cartData.items.reduce((sum, item) => sum + item.quantity, 0)
+        const totalCount = cartData.items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        )
         setCartCount(totalCount)
       } catch (err) {
         console.error('Failed to load cart:', err)
@@ -349,14 +360,19 @@ const Checkout: React.FC = () => {
     fetchData()
   }, [])
 
-  const totalAmount = cartItems.reduce((sum, item) => sum + (item.product?.price || 0) * item.quantity, 0)
+  const totalAmount = cartItems.reduce(
+    (sum, item) => sum + (item.product?.price || 0) * item.quantity,
+    0
+  )
   const shippingFee = totalAmount >= 99 ? 0 : 10
   const finalAmount = totalAmount + shippingFee
 
   const generateOrderNo = () => {
     const now = new Date()
     const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '')
-    const randomStr = Math.floor(Math.random() * 1000000).toString().padStart(6, '0')
+    const randomStr = Math.floor(Math.random() * 1000000)
+      .toString()
+      .padStart(6, '0')
     return `ORD${dateStr}${randomStr}`
   }
 
@@ -373,7 +389,7 @@ const Checkout: React.FC = () => {
       return
     }
 
-    const address = mockAddresses.find(addr => addr.id === selectedAddress)
+    const address = mockAddresses.find((addr) => addr.id === selectedAddress)
     if (!address) {
       setError('请选择收货地址')
       return
@@ -391,18 +407,19 @@ const Checkout: React.FC = () => {
         receiver_name: address.name,
         receiver_phone: address.phone,
         receiver_address: `${address.province} ${address.city} ${address.district} ${address.detail}`,
-        remark: '',
+        remark: ''
       }
 
       const orderId = await createOrder(orderData)
 
       // 清空购物车
-      await clearCart(cartItems.map(item => item.id))
+      await clearCart(cartItems.map((item) => item.id))
 
       // 跳转到订单详情页
       navigate(`/order/${orderId}`)
-    } catch (err: any) {
-      setError(err?.message || '创建订单失败，请稍后重试')
+    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setError((err as any)?.message || '创建订单失败，请稍后重试')
       setSubmitting(false)
     }
   }
@@ -465,9 +482,7 @@ const Checkout: React.FC = () => {
                 <NavLink href="/products">全部商品</NavLink>
                 <NavLink href="/categories">分类</NavLink>
                 <NavLink href="/deals">优惠</NavLink>
-                <CartButton href="/cart">
-                  🛒 购物车
-                </CartButton>
+                <CartButton href="/cart">🛒 购物车</CartButton>
                 {isLoggedIn() ? (
                   <AuthLink href="/profile">个人中心</AuthLink>
                 ) : (
@@ -541,12 +556,15 @@ const Checkout: React.FC = () => {
                 <SectionCard>
                   <SectionHeader>
                     <SectionTitle>📍 收货地址</SectionTitle>
-                    <Link to="/profile/address" style={{ color: '#667eea', fontSize: '14px' }}>
+                    <Link
+                      to="/profile/address"
+                      style={{ color: '#667eea', fontSize: '14px' }}
+                    >
                       管理地址
                     </Link>
                   </SectionHeader>
                   <AddressList>
-                    {mockAddresses.map(address => (
+                    {mockAddresses.map((address) => (
                       <AddressCard
                         key={address.id}
                         $selected={selectedAddress === address.id}
@@ -555,14 +573,19 @@ const Checkout: React.FC = () => {
                         <AddressHeader>
                           <AddressName>{address.name}</AddressName>
                           <AddressPhone>{address.phone}</AddressPhone>
-                          {address.isDefault && <AddressDefault>默认</AddressDefault>}
+                          {address.isDefault && (
+                            <AddressDefault>默认</AddressDefault>
+                          )}
                         </AddressHeader>
                         <AddressDetail>
-                          {address.province} {address.city} {address.district} {address.detail}
+                          {address.province} {address.city} {address.district}{' '}
+                          {address.detail}
                         </AddressDetail>
                       </AddressCard>
                     ))}
-                    <AddAddressButton onClick={() => navigate('/profile/address')}>
+                    <AddAddressButton
+                      onClick={() => navigate('/profile/address')}
+                    >
                       + 添加新地址
                     </AddAddressButton>
                   </AddressList>
@@ -572,12 +595,20 @@ const Checkout: React.FC = () => {
                 <SectionCard>
                   <SectionTitle>📦 商品清单</SectionTitle>
                   <CartList>
-                    {cartItems.map(item => (
+                    {cartItems.map((item) => (
                       <CartItem key={item.id}>
-                        <ItemImage src={item.product?.image_url || 'https://via.placeholder.com/80'} alt={item.product?.name} />
+                        <ItemImage
+                          src={
+                            item.product?.image_url ||
+                            'https://via.placeholder.com/80'
+                          }
+                          alt={item.product?.name}
+                        />
                         <ItemInfo>
                           <ItemName>{item.product?.name}</ItemName>
-                          <ItemPrice>¥{(item.product?.price || 0).toFixed(2)}</ItemPrice>
+                          <ItemPrice>
+                            ¥{(item.product?.price || 0).toFixed(2)}
+                          </ItemPrice>
                         </ItemInfo>
                         <ItemQuantity>x{item.quantity}</ItemQuantity>
                       </CartItem>
@@ -630,7 +661,11 @@ const Checkout: React.FC = () => {
                   </SummaryRow>
                   <SummaryRow>
                     <span>运费</span>
-                    <span>{shippingFee === 0 ? '免运费' : `¥${shippingFee.toFixed(2)}`}</span>
+                    <span>
+                      {shippingFee === 0
+                        ? '免运费'
+                        : `¥${shippingFee.toFixed(2)}`}
+                    </span>
                   </SummaryRow>
                   <SummaryRow>
                     <span>优惠</span>

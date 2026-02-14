@@ -7,24 +7,30 @@ import {
   GRAPHQL_CONFIG,
   GraphQLOperationType,
   hasGraphqlErrors,
-  getGraphqlErrorMessage,
+  getGraphqlErrorMessage
 } from './graphql'
 
 describe('GraphQL Utils Tests', () => {
   describe('GraphQLUtils.getOperationType', () => {
     it('应该正确识别 query', () => {
       const query = `query { users { id } }`
-      expect(GraphQLUtils.getOperationType(query)).toBe(GraphQLOperationType.QUERY)
+      expect(GraphQLUtils.getOperationType(query)).toBe(
+        GraphQLOperationType.QUERY
+      )
     })
 
     it('应该正确识别 mutation', () => {
       const mutation = `mutation { createUser { id } }`
-      expect(GraphQLUtils.getOperationType(mutation)).toBe(GraphQLOperationType.MUTATION)
+      expect(GraphQLUtils.getOperationType(mutation)).toBe(
+        GraphQLOperationType.MUTATION
+      )
     })
 
     it('应该正确识别 subscription', () => {
       const subscription = `subscription { userAdded { id } }`
-      expect(GraphQLUtils.getOperationType(subscription)).toBe(GraphQLOperationType.SUBSCRIPTION)
+      expect(GraphQLUtils.getOperationType(subscription)).toBe(
+        GraphQLOperationType.SUBSCRIPTION
+      )
     })
 
     it('空字符串应该返回 query', () => {
@@ -82,6 +88,7 @@ describe('GraphQL Utils Tests', () => {
     })
 
     it('没有 errors 时应该返回 false', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = { data: { users: [] as any[] } }
       expect(hasGraphqlErrors(response)).toBe(false)
     })
@@ -104,6 +111,7 @@ describe('GraphQL Utils Tests', () => {
     })
 
     it('没有错误时应该返回空字符串', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = { data: { users: [] as any[] } }
       expect(getGraphqlErrorMessage(response)).toBe('')
     })
@@ -116,7 +124,9 @@ describe('GraphQL Utils Tests', () => {
     })
 
     it('应该包含正确的默认 headers', () => {
-      expect(GRAPHQL_CONFIG.defaultHeaders['Content-Type']).toBe('application/json')
+      expect(GRAPHQL_CONFIG.defaultHeaders['Content-Type']).toBe(
+        'application/json'
+      )
     })
 
     it('应该包含 CSRF 配置', () => {

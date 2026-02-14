@@ -6,11 +6,14 @@ import React from 'react'
 
 // Mock react-helmet
 jest.mock('react-helmet', () => ({
-  Helmet: ({ children }: { children: React.ReactNode }): React.ReactNode => <div>{children}</div>,
+  Helmet: ({ children }: { children: React.ReactNode }): React.ReactNode => (
+    <div>{children}</div>
+  )
 }))
 
 // Mock @loadable/component
 jest.mock('@loadable/component', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Component = (props: any): React.ReactNode => <div {...props} />
   Component.preload = jest.fn()
   return Component
@@ -18,25 +21,50 @@ jest.mock('@loadable/component', () => {
 
 // Mock styled modules
 jest.mock('../styled/shop', () => ({
-  ShopLayout: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  ShopHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  HeaderContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  ShopLayout: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  ShopHeader: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  HeaderContent: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
   Logo: () => <span>Logo</span>,
-  NavMenu: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  NavLink: ({ children, to }: { children: React.ReactNode; to: string }) => <a href={to}>{children}</a>,
+  NavMenu: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  NavLink: ({ children, to }: { children: React.ReactNode; to: string }) => (
+    <a href={to}>{children}</a>
+  ),
   CartButton: () => <button>Cart</button>,
-  CartBadge: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
-  ShopMain: ({ children }: { children: React.ReactNode }) => <main>{children}</main>,
+  CartBadge: ({ children }: { children: React.ReactNode }) => (
+    <span>{children}</span>
+  ),
+  ShopMain: ({ children }: { children: React.ReactNode }) => (
+    <main>{children}</main>
+  ),
   ShopFooter: () => <footer>Footer</footer>,
-  Button: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => <button onClick={onClick}>{children}</button>,
-  EmptyContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Container: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Button: ({
+    children,
+    onClick
+  }: {
+    children: React.ReactNode
+    onClick?: () => void
+  }) => <button onClick={onClick}>{children}</button>,
+  EmptyContainer: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  Container: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  )
 }))
 
 // Mock styled-components globally（在导入Cart之前）
 jest.mock('styled-components', () => {
   const createStyledComponent = (): (() => null) => () => null
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const styled: any = {
     div: createStyledComponent,
     span: createStyledComponent,
@@ -44,7 +72,7 @@ jest.mock('styled-components', () => {
     input: createStyledComponent,
     img: createStyledComponent,
     header: createStyledComponent,
-    h3: createStyledComponent,
+    h3: createStyledComponent
   }
 
   const createGlobalStyle = (): (() => null) => () => null
@@ -54,7 +82,7 @@ jest.mock('styled-components', () => {
     styled,
     createGlobalStyle,
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
-    css: () => '',
+    css: () => ''
   }
 })
 

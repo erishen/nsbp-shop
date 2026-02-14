@@ -27,7 +27,7 @@ const AuthContainer = styled.div`
 const AuthCard = styled.div`
   background: white;
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   padding: 40px;
   width: 100%;
   max-width: 480px;
@@ -78,15 +78,18 @@ const InputWrapper = styled.div`
 const Input = styled.input<{ $error?: boolean }>`
   width: 100%;
   padding: 12px 40px 12px 16px;
-  border: 1px solid ${props => props.$error ? '#ff4d4f' : '#d9d9d9'};
+  border: 1px solid ${(props) => (props.$error ? '#ff4d4f' : '#d9d9d9')};
   border-radius: 6px;
   font-size: 14px;
   transition: all 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: ${props => props.$error ? '#ff4d4f' : '#667eea'};
-    box-shadow: ${props => props.$error ? '0 0 0 2px rgba(255,77,79,0.1)' : '0 0 0 2px rgba(102,126,234,0.1)'};
+    border-color: ${(props) => (props.$error ? '#ff4d4f' : '#667eea')};
+    box-shadow: ${(props) =>
+      props.$error
+        ? '0 0 0 2px rgba(255,77,79,0.1)'
+        : '0 0 0 2px rgba(102,126,234,0.1)'};
   }
 
   &:disabled {
@@ -150,13 +153,15 @@ const PasswordStrength = styled.div<{ $strength: number }>`
     content: '';
     display: block;
     height: 100%;
-    width: ${props => props.$strength * 33.33}%;
-    background: ${props => {
+    width: ${(props) => props.$strength * 33.33}%;
+    background: ${(props) => {
       if (props.$strength <= 1) return '#ff4d4f'
       if (props.$strength === 2) return '#faad14'
       return '#52c41a'
     }};
-    transition: width 0.3s ease, background 0.3s ease;
+    transition:
+      width 0.3s ease,
+      background 0.3s ease;
   }
 `
 
@@ -197,7 +202,10 @@ const validatePassword = (value: string): string => {
   return ''
 }
 
-const validateConfirmPassword = (password: string, confirmPassword: string): string => {
+const validateConfirmPassword = (
+  password: string,
+  confirmPassword: string
+): string => {
   if (!confirmPassword) return '请确认密码'
   if (password !== confirmPassword) return '两次输入的密码不一致'
   return ''
@@ -222,7 +230,12 @@ const getPasswordStrength = (password: string): number => {
   let strength = 0
   if (password.length >= 6) strength++
   if (password.length >= 8) strength++
-  if (/[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password)) strength++
+  if (
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password) &&
+    /[0-9]/.test(password)
+  )
+    strength++
   return Math.min(strength, 3)
 }
 
@@ -248,32 +261,49 @@ const ShopRegister: React.FC = () => {
     phone?: string
   }>({})
 
-  const handleFieldChange = (field: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setFormData(prev => ({ ...prev, [field]: value }))
+  const handleFieldChange =
+    (field: keyof typeof formData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value
+      setFormData((prev) => ({ ...prev, [field]: value }))
 
-    // 实时验证
-    switch (field) {
-      case 'username':
-        setFieldErrors(prev => ({ ...prev, username: validateUsername(value) }))
-        break
-      case 'password':
-        setFieldErrors(prev => ({ ...prev, password: validatePassword(value) }))
-        if (formData.confirmPassword) {
-          setFieldErrors(prev => ({ ...prev, confirmPassword: validateConfirmPassword(value, formData.confirmPassword) }))
-        }
-        break
-      case 'confirmPassword':
-        setFieldErrors(prev => ({ ...prev, confirmPassword: validateConfirmPassword(formData.password, value) }))
-        break
-      case 'email':
-        setFieldErrors(prev => ({ ...prev, email: validateEmail(value) }))
-        break
-      case 'phone':
-        setFieldErrors(prev => ({ ...prev, phone: validatePhone(value) }))
-        break
+      // 实时验证
+      switch (field) {
+        case 'username':
+          setFieldErrors((prev) => ({
+            ...prev,
+            username: validateUsername(value)
+          }))
+          break
+        case 'password':
+          setFieldErrors((prev) => ({
+            ...prev,
+            password: validatePassword(value)
+          }))
+          if (formData.confirmPassword) {
+            setFieldErrors((prev) => ({
+              ...prev,
+              confirmPassword: validateConfirmPassword(
+                value,
+                formData.confirmPassword
+              )
+            }))
+          }
+          break
+        case 'confirmPassword':
+          setFieldErrors((prev) => ({
+            ...prev,
+            confirmPassword: validateConfirmPassword(formData.password, value)
+          }))
+          break
+        case 'email':
+          setFieldErrors((prev) => ({ ...prev, email: validateEmail(value) }))
+          break
+        case 'phone':
+          setFieldErrors((prev) => ({ ...prev, phone: validatePhone(value) }))
+          break
+      }
     }
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -282,12 +312,15 @@ const ShopRegister: React.FC = () => {
     const errors = {
       username: validateUsername(formData.username),
       password: validatePassword(formData.password),
-      confirmPassword: validateConfirmPassword(formData.password, formData.confirmPassword),
+      confirmPassword: validateConfirmPassword(
+        formData.password,
+        formData.confirmPassword
+      ),
       email: formData.email ? validateEmail(formData.email) : '',
       phone: formData.phone ? validatePhone(formData.phone) : ''
     }
 
-    const hasErrors = Object.values(errors).some(error => error)
+    const hasErrors = Object.values(errors).some((error) => error)
     if (hasErrors) {
       setFieldErrors(errors)
       return
@@ -308,8 +341,9 @@ const ShopRegister: React.FC = () => {
       setTimeout(() => {
         window.location.href = '/login'
       }, 2000)
-    } catch (err: any) {
-      setError(err?.message || '注册失败，请稍后重试')
+    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setError((err as any)?.message || '注册失败，请稍后重试')
     } finally {
       setLoading(false)
     }
@@ -382,7 +416,9 @@ const ShopRegister: React.FC = () => {
 
               <Form onSubmit={handleSubmit}>
                 <FormGroup>
-                  <Label>用户名<RequiredLabel>*</RequiredLabel></Label>
+                  <Label>
+                    用户名<RequiredLabel>*</RequiredLabel>
+                  </Label>
                   <InputWrapper>
                     <Input
                       type="text"
@@ -413,7 +449,9 @@ const ShopRegister: React.FC = () => {
                 </FormGroup>
 
                 <FormGroup>
-                  <Label>密码<RequiredLabel>*</RequiredLabel></Label>
+                  <Label>
+                    密码<RequiredLabel>*</RequiredLabel>
+                  </Label>
                   <InputWrapper>
                     <Input
                       type={showPassword ? 'text' : 'password'}
@@ -447,7 +485,9 @@ const ShopRegister: React.FC = () => {
                 </FormGroup>
 
                 <FormGroup>
-                  <Label>确认密码<RequiredLabel>*</RequiredLabel></Label>
+                  <Label>
+                    确认密码<RequiredLabel>*</RequiredLabel>
+                  </Label>
                   <InputWrapper>
                     <Input
                       type={showConfirmPassword ? 'text' : 'password'}
@@ -460,7 +500,9 @@ const ShopRegister: React.FC = () => {
                     />
                     <PasswordToggle
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       disabled={loading}
                     >
                       {showConfirmPassword ? '👁️' : '👁️‍🗨️'}

@@ -65,15 +65,16 @@ export const NavLink = styled.a<{ $active?: boolean }>`
   padding: 8px 16px;
   border-radius: 20px;
   transition: all 0.3s ease;
-  background: ${props => props.$active ? 'rgba(255,255,255,0.2)' : 'transparent'};
-  
+  background: ${(props) =>
+    props.$active ? 'rgba(255,255,255,0.2)' : 'transparent'};
+
   &:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
   }
 `
 
 export const CartButton = styled.a<{ $active?: boolean }>`
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
   padding: 8px 16px;
@@ -88,7 +89,7 @@ export const CartButton = styled.a<{ $active?: boolean }>`
   text-decoration: none;
 
   &:hover {
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.3);
   }
 `
 
@@ -108,11 +109,12 @@ export const AuthLink = styled.a<{ $active?: boolean }>`
   transition: all 0.3s ease;
   text-decoration: none;
   font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-  background: ${props => props.$active ? 'rgba(255,255,255,0.2)' : 'transparent'};
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: ${(props) =>
+    props.$active ? 'rgba(255,255,255,0.2)' : 'transparent'};
 
   &:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
   }
 `
@@ -139,19 +141,19 @@ export const Carousel = styled.div`
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 40px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 `
 
 export const CarouselItem = styled.div<{ $bgImage: string }>`
   height: 100%;
-  background-image: url(${props => props.$bgImage});
+  background-image: url(${(props) => props.$bgImage});
   background-size: cover;
   background-position: center;
   display: flex;
   align-items: flex-end;
   padding: 40px;
   position: relative;
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -159,7 +161,7 @@ export const CarouselItem = styled.div<{ $bgImage: string }>`
     left: 0;
     right: 0;
     height: 50%;
-    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
   }
 `
 
@@ -182,7 +184,7 @@ export const SectionTitle = styled.h2`
   align-items: center;
   gap: 8px;
   color: #333;
-  
+
   .icon {
     color: #667eea;
   }
@@ -204,11 +206,11 @@ export const CategoryCard = styled.div`
   text-decoration: none;
   color: #333;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 `
 
@@ -244,11 +246,11 @@ export const ProductCard = styled.div`
   text-decoration: none;
   color: inherit;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 `
 
@@ -264,7 +266,7 @@ export const ProductImage = styled.img`
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
-  
+
   ${ProductCard}:hover & {
     transform: scale(1.05);
   }
@@ -320,7 +322,7 @@ export const ProductSales = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
-  
+
   .star {
     color: #faad14;
   }
@@ -332,7 +334,7 @@ export const FeatureGrid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   margin-bottom: 40px;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
@@ -342,7 +344,7 @@ export const FeatureCard = styled.div`
   background: white;
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 `
 
 export const FeatureTitle = styled.h3`
@@ -352,7 +354,7 @@ export const FeatureTitle = styled.h3`
   align-items: center;
   gap: 8px;
   color: #333;
-  
+
   .icon {
     color: #667eea;
   }
@@ -382,9 +384,11 @@ export const LoadingSpinner = styled.div`
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
-  
+
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 `
 
@@ -405,19 +409,34 @@ export const EmptyText = styled.div`
 `
 
 // 按钮
-export const Button = styled.button<{ $type?: 'primary' | 'default'; $size?: 'small' | 'medium' | 'large' }>`
-  padding: ${props => props.$size === 'small' ? '6px 12px' : props.$size === 'large' ? '12px 24px' : '8px 16px'};
+export const Button = styled.button<{
+  $type?: 'primary' | 'default'
+  $size?: 'small' | 'medium' | 'large'
+}>`
+  padding: ${(props) =>
+    props.$size === 'small'
+      ? '6px 12px'
+      : props.$size === 'large'
+        ? '12px 24px'
+        : '8px 16px'};
   border-radius: 6px;
   border: none;
   cursor: pointer;
-  font-size: ${props => props.$size === 'small' ? '12px' : props.$size === 'large' ? '16px' : '14px'};
+  font-size: ${(props) =>
+    props.$size === 'small'
+      ? '12px'
+      : props.$size === 'large'
+        ? '16px'
+        : '14px'};
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  
-  ${props => props.$type === 'primary' ? `
+
+  ${(props) =>
+    props.$type === 'primary'
+      ? `
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     
@@ -425,7 +444,8 @@ export const Button = styled.button<{ $type?: 'primary' | 'default'; $size?: 'sm
       opacity: 0.9;
       transform: translateY(-1px);
     }
-  ` : `
+  `
+      : `
     background: white;
     color: #333;
     border: 1px solid #d9d9d9;
@@ -445,10 +465,11 @@ export const SimpleNavLink = styled.a<{ $active?: boolean }>`
   padding: 8px 16px;
   border-radius: 20px;
   transition: all 0.3s ease;
-  background: ${props => props.$active ? 'rgba(255,255,255,0.2)' : 'transparent'};
+  background: ${(props) =>
+    props.$active ? 'rgba(255,255,255,0.2)' : 'transparent'};
 
   &:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
   }
 `
 
@@ -462,7 +483,7 @@ export const SimpleLogo = styled.a`
 `
 
 export const SimpleCartButton = styled.a`
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   color: white;
   padding: 8px 16px;
   border-radius: 20px;
@@ -476,7 +497,7 @@ export const SimpleCartButton = styled.a`
   text-decoration: none;
 
   &:hover {
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.3);
   }
 `
 

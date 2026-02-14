@@ -45,7 +45,14 @@ import {
   EmptyIcon,
   EmptyText
 } from '../styled/shop'
-import { getHomePageData, getCart, isLoggedIn as checkIsLoggedIn, type Banner, type Product, type Category } from '../services/shop'
+import {
+  getHomePageData,
+  getCart,
+  isLoggedIn as checkIsLoggedIn,
+  type Banner,
+  type Product,
+  type Category
+} from '../services/shop'
 
 const ShopHome: React.FC = () => {
   const [loading, setLoading] = useState(true)
@@ -74,7 +81,7 @@ const ShopHome: React.FC = () => {
       try {
         setLoading(true)
         setError(null)
-        
+
         // 获取首页数据
         const homeData = await getHomePageData()
         setBanners(homeData.banners)
@@ -100,7 +107,10 @@ const ShopHome: React.FC = () => {
     const fetchCartCount = async () => {
       try {
         const cartData = await getCart()
-        const totalCount = cartData.items.reduce((sum, item) => sum + item.quantity, 0)
+        const totalCount = cartData.items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        )
         setCartCount(totalCount)
       } catch (err) {
         console.error('Failed to load cart:', err)
@@ -114,9 +124,9 @@ const ShopHome: React.FC = () => {
   // 自动轮播
   useEffect(() => {
     if (banners.length === 0) return
-    
+
     const timer = setInterval(() => {
-      setCurrentBanner(prev => (prev + 1) % banners.length)
+      setCurrentBanner((prev) => (prev + 1) % banners.length)
     }, 5000)
     return () => clearInterval(timer)
   }, [banners.length])
@@ -140,16 +150,16 @@ const ShopHome: React.FC = () => {
         <title>Shop - 精品商城</title>
         <meta name="description" content="精品商城 - 优质商品，品质生活" />
       </Helmet>
-      
+
       <ShopLayout>
         {/* Header */}
         <ShopHeader>
           <HeaderContent>
-            <Logo href="/">
-              🛍️ 精品商城
-            </Logo>
+            <Logo href="/">🛍️ 精品商城</Logo>
             <NavMenu>
-              <NavLink href="/" $active>首页</NavLink>
+              <NavLink href="/" $active>
+                首页
+              </NavLink>
               <NavLink href="/products">全部商品</NavLink>
               <NavLink href="/categories">分类</NavLink>
               <NavLink href="/deals">优惠</NavLink>
@@ -171,14 +181,16 @@ const ShopHome: React.FC = () => {
 
         <ShopMain>
           {error && (
-            <div style={{ 
-              padding: '12px 16px', 
-              background: '#fff2f0', 
-              border: '1px solid #ffccc7',
-              borderRadius: '8px',
-              marginBottom: '24px',
-              color: '#ff4d4f'
-            }}>
+            <div
+              style={{
+                padding: '12px 16px',
+                background: '#fff2f0',
+                border: '1px solid #ffccc7',
+                borderRadius: '8px',
+                marginBottom: '24px',
+                color: '#ff4d4f'
+              }}
+            >
               {error}
             </div>
           )}
@@ -202,7 +214,7 @@ const ShopHome: React.FC = () => {
             </SectionTitle>
             {categories.length > 0 ? (
               <CategoryGrid>
-                {categories.map(category => (
+                {categories.map((category) => (
                   <Link key={category.id} to={`/category/${category.id}`}>
                     <CategoryCard>
                       <CategoryIcon>{category.icon || '📦'}</CategoryIcon>
@@ -227,14 +239,22 @@ const ShopHome: React.FC = () => {
             </SectionTitle>
             {products.length > 0 ? (
               <ProductGrid>
-                {products.map(product => (
+                {products.map((product) => (
                   <Link key={product.id} to={`/product/${product.id}`}>
                     <ProductCard>
                       <ProductImageWrapper>
-                        <ProductImage src={product.image_url} alt={product.name} />
+                        <ProductImage
+                          src={product.image_url}
+                          alt={product.name}
+                        />
                         {product.original_price > product.price && (
                           <ProductBadge>
-                            {Math.round(((product.original_price - product.price) / product.original_price) * 100)}% OFF
+                            {Math.round(
+                              ((product.original_price - product.price) /
+                                product.original_price) *
+                                100
+                            )}
+                            % OFF
                           </ProductBadge>
                         )}
                       </ProductImageWrapper>
@@ -243,7 +263,9 @@ const ShopHome: React.FC = () => {
                         <ProductPrice>
                           <CurrentPrice>¥{product.price}</CurrentPrice>
                           {product.original_price > product.price && (
-                            <OriginalPrice>¥{product.original_price}</OriginalPrice>
+                            <OriginalPrice>
+                              ¥{product.original_price}
+                            </OriginalPrice>
                           )}
                         </ProductPrice>
                         <ProductSales>
@@ -275,7 +297,9 @@ const ShopHome: React.FC = () => {
                   <span className="icon">🔥</span>
                   超值优惠
                 </FeatureTitle>
-                <FeatureDesc>每日精选超值商品，限时抢购，让你省钱又省心</FeatureDesc>
+                <FeatureDesc>
+                  每日精选超值商品，限时抢购，让你省钱又省心
+                </FeatureDesc>
               </FeatureCard>
               <FeatureCard>
                 <FeatureTitle>
