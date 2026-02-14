@@ -8,6 +8,16 @@ const { version } = require('../package.json')
 const LoadablePlugin = require('@loadable/webpack-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 
+// 可选依赖：Bundle Analyzer（仅在 ANALYZE=1 且已安装时启用）
+let BundleAnalyzerPlugin = null
+try {
+  if (process.env.ANALYZE === '1') {
+    BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+  }
+} catch (e) {
+  console.warn('webpack-bundle-analyzer not installed. Run: pnpm add -D webpack-bundle-analyzer')
+}
+
 // 加载环境变量
 require('dotenv').config()
 require('dotenv').config({ path: '.env.local' })
@@ -114,7 +124,16 @@ module.exports = ({ mode, entry, server, init }) => {
       }),
       new webpack.DefinePlugin({
         'process.env.NSGM_SHOP_API': JSON.stringify(process.env.NSGM_SHOP_API || 'http://localhost:3000'),
-      })
+      }),
+      // Bundle 分析工具 - 仅在 ANALYZE=1 且已安装时启用
+      ...(process.env.ANALYZE === '1' && BundleAnalyzerPlugin ? [
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          openAnalyzer: true,
+          reportFilename: 'bundle-report.html',
+          defaultSizes: 'gzip'
+        })
+      ] : [])
     ],
     optimization: {
       minimize: mode === 'production' || server ? true : false,

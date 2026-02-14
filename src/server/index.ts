@@ -11,13 +11,22 @@ const app = express()
 app.set('trust proxy', true)
 
 // 1. Security headers (helmet)
+// 注意：由于 styled-components SSR 需要 'unsafe-inline'，暂时保留该配置
+// 未来可考虑迁移到 CSS-in-JS 的静态提取方案后移除
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",  // styled-components SSR 需要
+          "'unsafe-eval'"     // 某些动态代码执行需要
+        ],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'"   // styled-components SSR 需要
+        ],
         imgSrc: ["'self'", 'data:', 'https:', 'http:'],
         connectSrc: [
           "'self'",
@@ -28,7 +37,12 @@ app.use(
         fontSrc: ["'self'", 'data:'],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
-        frameSrc: ["'none'"]
+        frameSrc: ["'none'"],
+        // 安全增强：添加 base-uri 和 form-action 限制
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+        // 防止 MIME 类型混淆攻击
+        upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null
       }
     },
     crossOriginEmbedderPolicy: false, // Allow inline scripts for SSR

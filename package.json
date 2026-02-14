@@ -18,6 +18,7 @@
     "convert:webp": "node scripts/convert-to-webp.js",
     "generate:responsive": "node scripts/generate-responsive-images.js",
     "build:prod": "pnpm run generate:responsive && pnpm run build",
+    "analyze": "cross-env ANALYZE=1 pnpm run build",
     "format": "prettier --write **/*.{js,css,less,scss,ts,tsx}",
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
@@ -132,7 +133,8 @@
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.1.0",
     "webpack-merge": "^6.0.1",
-    "webpack-node-externals": "^3.0.0"
+    "webpack-node-externals": "^3.0.0",
+    "webpack-bundle-analyzer": "^4.10.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

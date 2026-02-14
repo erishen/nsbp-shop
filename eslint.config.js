@@ -24,6 +24,7 @@ module.exports = [
       'coverage/**',
       '.nyc_output/**',
       '*.config.js',
+      'config/**',
       'webpack.base.js',
       'webpack.client.js',
       'webpack.server.js',
@@ -61,8 +62,7 @@ module.exports = [
         clearTimeout: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',
-        fetch: 'readonly',
-        setTimeout: 'readonly'
+        fetch: 'readonly'
       }
     },
     plugins: {

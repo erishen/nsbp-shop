@@ -3,11 +3,17 @@ import reducers from '@reducers'
 
 const combineReducer = combineReducers({ ...reducers })
 
-const getStore = (stateParam = {}) => {
+const getStore = (preloadedState = {}) => {
   return configureStore({
     reducer: combineReducer,
-    preloadedState: stateParam || {},
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware()
+    preloadedState,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          // 忽略某些 action 的序列化检查
+          ignoredActions: ['REQUEST_QUERY'],
+        },
+      })
   })
 }
 

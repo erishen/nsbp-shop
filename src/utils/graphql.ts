@@ -5,6 +5,95 @@ import axios from 'axios'
 // nsgm-shop GraphQL 端点配置
 const NSGM_SHOP_API = process.env.NSGM_SHOP_API || 'http://localhost:3000'
 
+// ==================== 缓存配置 ====================
+
+interface CacheItem<T> {
+  data: T
+  timestamp: number
+  ttl: number
+}
+
+class GraphQLCache {
+  private cache = new Map<string, CacheItem<unknown>>()
+  private defaultTTL: number
+
+  constructor(defaultTTL = 60000) { // 默认缓存 60 秒
+    this.defaultTTL = defaultTTL
+  }
+
+  // 生成缓存键
+  private getCacheKey(query: string, variables?: Record<string, unknown>): string {
+    const normalizedQuery = query.trim().replace(/\s+/g, ' ')
+    const variablesStr = variables ? JSON.stringify(variables) : ''
+    return `${normalizedQuery}:${variablesStr}`
+  }
+
+  // 获取缓存
+  get<T>(query: string, variables?: Record<string, unknown>): T | null {
+    const key = this.getCacheKey(query, variables)
+    const item = this.cache.get(key)
+    
+    if (!item) return null
+    
+    // 检查是否过期
+    if (Date.now() - item.timestamp > item.ttl) {
+      this.cache.delete(key)
+      return null
+    }
+    
+    return item.data as T
+  }
+
+  // 设置缓存
+  set<T>(query: string, data: T, variables?: Record<string, unknown>, ttl?: number): void {
+    const key = this.getCacheKey(query, variables)
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+      ttl: ttl ?? this.defaultTTL
+    })
+  }
+
+  // 清除所有缓存
+  clear(): void {
+    this.cache.clear()
+  }
+
+  // 清除特定查询的缓存
+  clearQuery(query: string, variables?: Record<string, unknown>): void {
+    const key = this.getCacheKey(query, variables)
+    this.cache.delete(key)
+  }
+
+  // 清除过期的缓存
+  clearExpired(): void {
+    const now = Date.now()
+    for (const [key, item] of this.cache.entries()) {
+      if (now - item.timestamp > item.ttl) {
+        this.cache.delete(key)
+      }
+    }
+  }
+
+  // 获取缓存统计
+  getStats() {
+    return {
+      size: this.cache.size,
+      keys: Array.from(this.cache.keys())
+    }
+  }
+}
+
+// 全局缓存实例
+const graphqlCache = new GraphQLCache(60000) // 默认 60 秒缓存
+
+// 定期清理过期缓存（每 5 分钟）
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    graphqlCache.clearExpired()
+  }, 5 * 60 * 1000)
+}
+
 // GraphQL 配置
 export const GRAPHQL_CONFIG = {
   endpoint: `${NSGM_SHOP_API}/graphql`,
@@ -79,15 +168,27 @@ export const getCSRFToken = async (): Promise<string> => {
 
 // GraphQL 主函数
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const graphqlRequest = async (query: string, variables: any = {}) => {
+export const graphqlRequest = async (query: string, variables: any = {}, options?: { 
+  skipCache?: boolean
+  cacheTTL?: number 
+}) => {
   if (!GraphQLUtils.isValidQuery(query)) {
     throw new Error('Invalid GraphQL query syntax')
   }
 
-  try {
-    const operationType = GraphQLUtils.getOperationType(query)
-    const isMutation = operationType === GraphQLOperationType.MUTATION
+  const { skipCache = false, cacheTTL } = options || {}
+  const operationType = GraphQLUtils.getOperationType(query)
+  const isMutation = operationType === GraphQLOperationType.MUTATION
 
+  // Query 请求使用缓存（除非明确跳过）
+  if (!isMutation && !skipCache) {
+    const cachedData = graphqlCache.get(query, variables)
+    if (cachedData) {
+      return cachedData
+    }
+  }
+
+  try {
     const headers: Record<string, string> = {
       ...GRAPHQL_CONFIG.defaultHeaders
     }
@@ -110,6 +211,9 @@ export const graphqlRequest = async (query: string, variables: any = {}) => {
         { query, variables },
         { headers, withCredentials: true }
       )
+      
+      // Mutation 成功后清除相关缓存
+      graphqlCache.clear()
     } else {
       // Query 使用 GET
       const params = new URLSearchParams()
@@ -128,6 +232,10 @@ export const graphqlRequest = async (query: string, variables: any = {}) => {
     }
 
     if (response?.data) {
+      // Query 请求缓存结果
+      if (!isMutation && response.data) {
+        graphqlCache.set(query, response.data, variables, cacheTTL)
+      }
       return response.data
     } else {
       throw new Error('GraphQL response is empty')
@@ -162,4 +270,26 @@ export const getGraphqlErrorMessage = (response: any): string => {
     return response.errors.map((error: any) => error.message).join('; ')
   }
   return ''
+}
+
+// ==================== 缓存管理 API ====================
+
+// 清除所有 GraphQL 缓存
+export const clearGraphQLCache = (): void => {
+  graphqlCache.clear()
+}
+
+// 清除特定查询的缓存
+export const clearGraphQLQueryCache = (query: string, variables?: Record<string, unknown>): void => {
+  graphqlCache.clearQuery(query, variables)
+}
+
+// 获取缓存统计信息
+export const getGraphQLCacheStats = () => {
+  return graphqlCache.getStats()
+}
+
+// 手动清理过期缓存
+export const cleanupGraphQLCache = (): void => {
+  graphqlCache.clearExpired()
 }
