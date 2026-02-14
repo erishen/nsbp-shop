@@ -55,7 +55,7 @@ export const mockReactRouterDom = () => {
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => jest.fn(),
     useParams: () => ({}),
-    useLocation: () => ({ pathname: '/', search: '', hash: '', state: null }),
+    useLocation: () => ({ pathname: '/', search: '', hash: '', state: null as unknown }),
     Link: ({ children, to }: { children: React.ReactNode; to: string }) => (
       <a href={to}>{children}</a>
     )

@@ -12,16 +12,7 @@ import { ServerStyleSheet } from 'styled-components'
 import Theme from '@components/Theme'
 import path from 'path'
 import { ChunkExtractor } from '@loadable/server'
-
-interface Request {
-  path: string
-  query: Record<string, string | string[] | ParsedQs | undefined>
-}
-
-interface Response {
-  send: (html: string) => void
-  status: (code: number) => { send: (msg: string) => void }
-}
+import type { Request, Response } from 'express'
 
 export const render = (req: Request, res: Response) => {
   const store = getStore()
@@ -34,10 +25,11 @@ export const render = (req: Request, res: Response) => {
   }[] = []
   const promises = []
 
-  let { nsbp } = query
+  const nsbp = query.nsbp
 
-  if (nsbp !== undefined && nsbp !== '') {
-    nsbp = parseInt(nsbp, 10)
+  let nsbpValue: number | undefined
+  if (nsbp !== undefined && nsbp !== '' && typeof nsbp === 'string') {
+    nsbpValue = parseInt(nsbp, 10)
   }
 
   routers.some((route) => {
@@ -49,7 +41,8 @@ export const render = (req: Request, res: Response) => {
       const promise = new Promise((resolve, reject) => {
         try {
           // 将 query 参数传递给 loadData，确保能正确预取数据
-          store.dispatch(item?.loadData(resolve, query))
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          store.dispatch(item?.loadData(resolve, query) as any)
         } catch {
           reject()
         }
@@ -69,7 +62,7 @@ export const render = (req: Request, res: Response) => {
     }
   }
 
-  const queryPromise = new Promise((resolve, reject) => {
+  const queryPromise = new Promise<void>((resolve, reject) => {
     try {
       store.dispatch(queryDispatch(() => resolve()))
     } catch {
@@ -231,13 +224,13 @@ export const render = (req: Request, res: Response) => {
           `
 
         res.send(html)
-      } catch (e: Error) {
-        console.error('SSR rendering error:', e.message)
+      } catch (e: unknown) {
+        console.error('SSR rendering error:', (e as Error).message)
         res.status(500).send('Internal Server Error')
       }
     })
-    .catch((e: Error) => {
-      console.error('Data loading error:', e.message)
+    .catch((e: unknown) => {
+      console.error('Data loading error:', (e as Error).message)
       res.status(500).send('Data loading failed')
     })
 }

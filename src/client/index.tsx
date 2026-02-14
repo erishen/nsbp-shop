@@ -18,6 +18,13 @@ declare const module: NodeModule & {
   }
 }
 
+// 为 HTMLElement 扩展 _reactRoot 属性
+declare global {
+  interface HTMLElement {
+    _reactRoot?: ReturnType<typeof createRoot>
+  }
+}
+
 const App = () => {
   // 使用 useMemo 确保 store 只创建一次，避免每次渲染都创建新 store
   const store = useMemo(() => {

@@ -7,8 +7,9 @@ import { Helmet } from 'react-helmet'
 import { Container, Row } from '@styled/photo'
 import { motion } from 'framer-motion'
 import { isSEO, getLocationParams, usePreserveNSBP } from '@/utils'
-import _ from 'lodash'
+import map from 'lodash/map'
 import { loadDataForContainer } from '@services/photo'
+import { useResponsiveImage } from '@components/ResponsiveImage'
 
 const springSettings = { type: 'spring' as const, stiffness: 170, damping: 26 }
 const NEXT = 'show-next'
@@ -23,6 +24,50 @@ interface PhotoProps {
   data: [number, number, string][]
   menu: Array<{ name: string; cover?: string; count?: number }>
   getPhotoMenu: (dic: string) => void
+}
+
+// 响应式图片组件（带 motion 动画）
+interface ResponsivePhotoImageProps {
+  src: string
+  pos: { left: number; height: number; width: number }
+  index: number
+}
+
+const ResponsivePhotoImage: React.FC<ResponsivePhotoImageProps> = ({ src, pos, index }) => {
+  const { srcset, sizes, webpSrc } = useResponsiveImage(src)
+
+  return (
+    <motion.picture
+      key={index}
+      className="demo4-photo"
+      initial={false}
+      animate={{
+        left: pos.left,
+        height: pos.height,
+        width: pos.width
+      }}
+      transition={springSettings}
+      style={{
+        position: 'absolute',
+        top: 0
+      }}
+    >
+      {/* 响应式 WebP 图片 */}
+      <source srcSet={srcset} sizes={sizes} type="image/webp" />
+      {/* 兜底 WebP */}
+      <source srcSet={webpSrc} type="image/webp" />
+      {/* 原图 */}
+      <motion.img
+        src={src}
+        loading="lazy"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover'
+        }}
+      />
+    </motion.picture>
+  )
 }
 
 const Photo = ({ query, data, menu, getPhotoMenu }: PhotoProps) => {
@@ -133,7 +178,7 @@ const Photo = ({ query, data, menu, getPhotoMenu }: PhotoProps) => {
       <Layout query={query}>
         <Container>
           <Row>
-            {_.map(menu, (item: { name: string }, index: number) => {
+            {map(menu, (item: { name: string }, index: number) => {
               return (
                 <Link
                   key={`menu${index}`}
@@ -162,30 +207,20 @@ const Photo = ({ query, data, menu, getPhotoMenu }: PhotoProps) => {
               animate={{ height: currHeight, width: currWidth }}
               transition={springSettings}
             >
-              {photoPositions.map((pos, i) => (
-                <motion.img
-                  key={i}
-                  className="demo4-photo"
-                  src={
-                    photos[i][2]
-                      ? isSEO() === 1
-                        ? `/images/${photos[i][2]}`
-                        : `/images/${photos[i][2]}`
-                      : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
-                  }
-                  initial={false}
-                  animate={{
-                    left: pos.left,
-                    height: pos.height,
-                    width: pos.width
-                  }}
-                  transition={springSettings}
-                  style={{
-                    position: 'absolute',
-                    top: 0
-                  }}
-                />
-              ))}
+              {photoPositions.map((pos, i) => {
+                const originalSrc = photos[i][2]
+                  ? `/images/${photos[i][2]}`
+                  : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+
+                return (
+                  <ResponsivePhotoImage
+                    key={i}
+                    src={originalSrc}
+                    pos={pos}
+                    index={i}
+                  />
+                )
+              })}
             </motion.div>
           </div>
         </Container>

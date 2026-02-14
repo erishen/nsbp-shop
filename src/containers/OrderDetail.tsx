@@ -330,8 +330,13 @@ const generateMockOrderDetail = (
   order_no: `ORD${Date.now()}`,
   user_id: 1,
   total_amount: 599.0,
+  pay_amount: 599.0,
   status: 'processing',
-  created_at: new Date().toISOString(),
+  pay_status: 'paid',
+  receiver_name: '张三',
+  receiver_phone: '13800138000',
+  receiver_address: '北京市朝阳区xxx街道xxx号',
+  create_date: new Date().toISOString(),
   items: [
     {
       id: 1,
@@ -566,7 +571,7 @@ const OrderDetail: React.FC = () => {
                 <MetaItem>
                   <MetaLabel>下单时间</MetaLabel>
                   <MetaValue>
-                    {new Date(order.created_at).toLocaleString()}
+                    {new Date(order.create_date).toLocaleString()}
                   </MetaValue>
                 </MetaItem>
                 <MetaItem>

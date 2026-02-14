@@ -272,7 +272,7 @@ export const ProductImage = styled.img`
   }
 `
 
-export const ProductBadge = styled.span`
+export const ProductBadge = styled.span<{ $discount?: boolean }>`
   position: absolute;
   top: 12px;
   left: 12px;

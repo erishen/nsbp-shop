@@ -202,8 +202,8 @@ const UserInfo: React.FC = () => {
           <div
             style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end' }}
           >
-            <Button type="default">取消</Button>
-            <Button type="primary">保存</Button>
+            <Button $type="default">取消</Button>
+            <Button $type="primary">保存</Button>
           </div>
         </Container>
       </Form>

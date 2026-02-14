@@ -3,6 +3,7 @@ const webpack = require('webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
 const { version } = require('../package.json')
 const LoadablePlugin = require('@loadable/webpack-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
@@ -152,6 +153,16 @@ module.exports = ({ mode, entry, server, init }) => {
     if (mode === 'development') {
       config.entry['vendor'] = ['react', 'react-dom']
     } else if (mode === 'production') {
+      // 启用 Gzip 压缩
+      config.plugins.push(
+        new CompressionPlugin({
+          algorithm: 'gzip',
+          test: /\.(js|css|html|svg)$/,
+          threshold: 10240, // 10KB 以上的文件才压缩
+          minRatio: 0.8
+        })
+      )
+
       config.optimization.minimizer.push(
         new TerserPlugin({
           terserOptions: {
@@ -174,42 +185,45 @@ module.exports = ({ mode, entry, server, init }) => {
         enforceSizeThreshold: 50000,
         name: false,
         cacheGroups: {
+          // React 核心库 - 最高优先级
           framework: {
-            // 将react和react-dom打入framework当中
             name: 'framework',
-            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/, //匹配库当中的react和react-dom
-            priority: 40, //权重为40 最大权重
+            test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom)[\\]/,
+            priority: 50,
             reuseExistingChunk: true
           },
-          lib: {
-            test: (module) => {
-              // 匹配包大于160000的
-              if (module.size() > 20000) {
-                console.log('test_module', module.identifier(), module.size())
-              }
-              return module.size() > 20000
-            },
-            name(module) {
-              //名字就是包当中的名字
-              const match = /[\\/]node_modules[\\/](.*)/.exec(module.identifier())
-              if (match && match.length) {
-                // 移除开头的点号，避免生成隐藏文件
-                return match[1].replace(/\/|\\/g, '_').replace(/^\./, '')
-              }
-              return false
-            },
-            minChunks: 1, //最小共用次数为1时就使用
-            priority: 30, //权重为30
+          // Redux 相关
+          redux: {
+            name: 'redux',
+            test: /[\\/]node_modules[\\/](redux|react-redux|@reduxjs\/toolkit)[\\]/,
+            priority: 45,
             reuseExistingChunk: true
           },
+          // UI 相关库
+          ui: {
+            name: 'ui',
+            test: /[\\/]node_modules[\\/](styled-components|framer-motion|@emotion)[\\]/,
+            priority: 40,
+            reuseExistingChunk: true,
+            minSize: 40000
+          },
+          // 工具库
+          utils: {
+            name: 'utils',
+            test: /[\\/]node_modules[\\/](lodash|axios)[\\]/,
+            priority: 35,
+            reuseExistingChunk: true
+          },
+          // 通用 vendor
           vendor: {
             name: 'vendor',
-            test: /[\\/]node_modules[\\/]/,
+            test: /[\\/]node_modules[\\]/,
             priority: 20,
             reuseExistingChunk: true
           },
-          default: {
-            name: 'default',
+          // 共用代码
+          common: {
+            name: 'common',
             minChunks: 2,
             priority: 10,
             reuseExistingChunk: true

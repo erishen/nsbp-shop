@@ -206,12 +206,12 @@ const Security: React.FC = () => {
               </FormGroup>
               <Actions>
                 <Button
-                  $variant="default"
+                  $type="danger"
                   onClick={() => setShowPasswordForm(false)}
                 >
                   取消
                 </Button>
-                <Button $variant="primary">确认修改</Button>
+                <Button $type="primary">确认修改</Button>
               </Actions>
             </Form>
           )}

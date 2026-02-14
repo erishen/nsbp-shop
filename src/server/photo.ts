@@ -46,15 +46,19 @@ const getFileMenu = (
         .filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
       const count = files.length
 
-      // 在该目录下找 cover.jpg
+      // 在该目录下找 cover.webp 或 cover.jpg
       let cover = ''
-      const coverPath = path.join(fullPath, 'cover.jpg')
-      if (fs.existsSync(coverPath)) {
-        // 转成相对 public 的 URL 路径
+      const coverWebpPath = path.join(fullPath, 'cover.webp')
+      const coverJpgPath = path.join(fullPath, 'cover.jpg')
+
+      if (fs.existsSync(coverWebpPath)) {
+        cover = `/images/${item}/cover.webp`
+      } else if (fs.existsSync(coverJpgPath)) {
         cover = `/images/${item}/cover.jpg`
       } else if (files.length > 0) {
-        // 否则找第一张图片
-        cover = `/images/${item}/${files[0]}`
+        // 否则找第一张图片（优先 WebP）
+        const webpFile = files.find(f => f.endsWith('.webp'))
+        cover = `/images/${item}/${webpFile || files[0]}`
       }
       result.push({ name, cover, count })
     }
